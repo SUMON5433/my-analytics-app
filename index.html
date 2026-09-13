@@ -334,11 +334,10 @@
         <span id="toastMessage">Action successful</span>
     </div>
 
-    <!-- Firebase SDK Scripts (Modular v12) -->
+    <!-- Firebase SDK Scripts (Modular v11) -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-        import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set, push, remove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
         // Your Firebase configuration
         const firebaseConfig = {
@@ -351,9 +350,7 @@
             measurementId: "G-DE3WJYMXCB"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const db = getDatabase(app);
 
         let isAdminLoggedIn = false;
@@ -392,13 +389,11 @@
         }
 
         window.toggleTheme = function() {
-            if (siteSettings.theme === 'dark') {
-                siteSettings.theme = 'light';
-            } else {
-                siteSettings.theme = 'dark';
-            }
+            siteSettings.theme = siteSettings.theme === 'dark' ? 'light' : 'dark';
             localStorage.setItem('site_theme', siteSettings.theme);
             applyThemeUI();
+            renderApps(appsData);
+            renderYouTubePosts();
         }
 
         function applyThemeUI() {
@@ -413,18 +408,8 @@
                 htmlEl.classList.add('light');
                 if(themeIcon) themeIcon.className = "fa-solid fa-sun text-sm text-amber-500";
                 if(bodyBg) bodyBg.className = "bg-gray-100 text-gray-900 min-h-screen pb-24 transition-colors duration-300";
-                if(headerBg) headerBg.className = "sticky top-0 z-50 backdrop-blur-md bg-white/90 border-b border-gray-200 px-4 py-3 flex items-center justify-between transition-colors duration-300";
+                if(headerBg) headerBg.className = "sticky top-0 z-55 backdrop-blur-md bg-white/90 border-b border-gray-200 px-4 py-3 flex items-center justify-between transition-colors duration-300";
                 if(navBg) navBg.className = "fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-4 py-2 max-w-lg mx-auto md:max-w-xl transition-colors duration-300";
-
-                // Light theme background tweaks for cards and modals
-                document.querySelectorAll('.bg-\\[\\#1b1b22\\]').forEach(el => {
-                    el.classList.remove('bg-[#1b1b22]', 'border-gray-800', 'text-gray-100');
-                    el.classList.add('bg-white', 'border-gray-200', 'text-gray-800', 'shadow-sm');
-                });
-                document.querySelectorAll('.bg-\\[\\#121216\\]').forEach(el => {
-                    el.classList.remove('bg-[#121216]', 'border-gray-800/80');
-                    el.classList.add('bg-gray-50', 'border-gray-200');
-                });
             } else {
                 htmlEl.classList.remove('light');
                 htmlEl.classList.add('dark');
@@ -432,50 +417,47 @@
                 if(bodyBg) bodyBg.className = "bg-[#121216] text-gray-100 min-h-screen pb-24 transition-colors duration-300";
                 if(headerBg) headerBg.className = "sticky top-0 z-50 backdrop-blur-md bg-[#121216]/80 border-b border-gray-800/60 px-4 py-3 flex items-center justify-between transition-colors duration-300";
                 if(navBg) navBg.className = "fixed bottom-0 left-0 right-0 z-50 bg-[#16161b]/95 backdrop-blur-lg border-t border-gray-800/80 px-4 py-2 max-w-lg mx-auto md:max-w-xl transition-colors duration-300";
-
-                document.querySelectorAll('.bg-white').forEach(el => {
-                    if(!el.classList.contains('file') && !el.tagName.toLowerCase().includes('button')) {
-                        el.classList.remove('bg-white', 'border-gray-200', 'text-gray-800', 'shadow-sm');
-                        el.classList.add('bg-[#1b1b22]', 'border-gray-800', 'text-gray-100');
-                    }
-                });
-                document.querySelectorAll('.bg-gray-50').forEach(el => {
-                    el.classList.remove('bg-gray-50', 'border-gray-200');
-                    el.classList.add('bg-[#121216]', 'border-gray-800/80');
-                });
             }
         }
 
-        // Realtime Data Sync from Firebase Database
         function fetchDataFromFirebase() {
-            // Fetch Settings
+            // Settings Sync
             onValue(ref(db, 'settings'), (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     siteSettings.name = data.name || "Zero Xploid";
                     siteSettings.count = data.count || "36 Apps";
                     siteSettings.notice = data.notice || "No new notifications";
+                } else {
+                    set(ref(db, 'settings'), { name: "Zero Xploid", count: "36 Apps", notice: "No new notifications" });
                 }
                 updateHeaderUI();
             });
 
-            // Fetch Apps
+            // Apps Sync
             onValue(ref(db, 'apps'), (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     appsData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
                 } else {
+                    // Seed default apps if empty
+                    defaultApps.forEach(app => {
+                        push(ref(db, 'apps'), app);
+                    });
                     appsData = defaultApps;
                 }
                 renderApps(appsData);
             });
 
-            // Fetch YouTube Posts
+            // YouTube Posts Sync
             onValue(ref(db, 'youtubePosts'), (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     youtubePostsData = Object.keys(data).map(key => ({ id: key, ...data[key] }));
                 } else {
+                    defaultYoutubePosts.forEach(post => {
+                        push(ref(db, 'youtubePosts'), post);
+                    });
                     youtubePostsData = defaultYoutubePosts;
                 }
                 renderYouTubePosts();
@@ -508,7 +490,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     document.getElementById('newAppLogo').value = e.target.result;
-                    showAlert('Logo uploaded from phone successfully!');
+                    showAlert('Logo uploaded successfully!');
                 };
                 reader.readAsDataURL(file);
             }
@@ -530,13 +512,13 @@
                 if(emptyState) emptyState.classList.add('hidden');
             }
 
-            const isLight = document.documentElement.classList.contains('light');
+            const isLight = siteSettings.theme === 'light';
             let cardBgClass = isLight ? "bg-white border-gray-200 text-gray-800 shadow-sm hover:border-indigo-500/50" : "bg-[#1b1b22] border-gray-800/80 text-gray-100 hover:border-indigo-500/50";
-            let subBoxClass = isLight ? "bg-gray-50 border-gray-200 text-gray-700" : "bg-[#121216] border-gray-800 text-gray-300";
+            let subBoxClass = isLight ? "bg-gray-100 border-gray-200 text-gray-700" : "bg-[#121216] border-gray-800 text-gray-300";
 
             items.forEach(app => {
                 const card = document.createElement('div');
-                card.className = `relative ${cardBgClass} hover:bg-opacity-90 rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition-all duration-200 group shadow-sm hover:-translate-y-0.5`;
+                card.className = `relative ${cardBgClass} border rounded-2xl p-3 flex flex-col items-center text-center cursor-pointer transition-all duration-200 group shadow-sm hover:-translate-y-0.5`;
                 
                 let deleteButtonHTML = '';
                 if (isAdminLoggedIn) {
@@ -573,9 +555,9 @@
                 return;
             }
 
-            const isLight = document.documentElement.classList.contains('light');
+            const isLight = siteSettings.theme === 'light';
             let boxClass = isLight ? "bg-white border-gray-200 shadow-sm" : "bg-[#1b1b22] border-gray-800";
-            let codeBoxClass = isLight ? "bg-gray-50 border-gray-200 text-gray-800" : "bg-[#121216] border-gray-800 text-gray-300";
+            let codeBoxClass = isLight ? "bg-gray-100 border-gray-200 text-gray-800" : "bg-[#121216] border-gray-800 text-gray-300";
 
             youtubePostsData.forEach(post => {
                 const card = document.createElement('div');
@@ -612,21 +594,15 @@
             let sCount = document.getElementById('settingAppCount').value.trim();
             let sNotice = document.getElementById('settingNoticeText').value.trim();
 
-            // Optimistic Update
-            siteSettings.name = sName || "Zero Xploid";
-            siteSettings.count = sCount || "36 Apps";
-            siteSettings.notice = sNotice || "No new notifications";
-            updateHeaderUI();
-            showAlert('Website Settings Updated Instantly!');
-            closeAdminDashboard();
-
-            // Background Firebase Save
             set(ref(db, 'settings'), {
-                name: siteSettings.name,
-                count: siteSettings.count,
-                notice: siteSettings.notice
-            }).catch(() => {
-                showAlert('Sync to cloud delayed, local updated.');
+                name: sName || "Zero Xploid",
+                count: sCount || "36 Apps",
+                notice: sNotice || "No new notifications"
+            }).then(() => {
+                showAlert('Website Settings Saved to Firebase!');
+                closeAdminDashboard();
+            }).catch((err) => {
+                showAlert('Failed to save settings: ' + err.message);
             });
         }
 
@@ -654,24 +630,17 @@
                 downloadUrl: downloadUrl
             };
 
-            // Instant UI Push (Optimistic Update)
-            let tempId = 'local_' + Date.now();
-            appsData.unshift({ id: tempId, ...newApp });
-            renderApps(appsData);
-            showAlert(`App "${name}" Published Successfully!`);
-            closeAdminDashboard();
-
-            // Clear inputs
-            document.getElementById('newAppName').value = '';
-            document.getElementById('newAppRating').value = '';
-            document.getElementById('newAppLogo').value = '';
-            document.getElementById('newAppLogoFile').value = '';
-            document.getElementById('newAppDownloadLink').value = '';
-            document.getElementById('newAppDesc').value = '';
-
-            // Background Firebase Push
-            push(ref(db, 'apps'), newApp).catch(() => {
-                showAlert('Cloud sync pending...');
+            push(ref(db, 'apps'), newApp).then(() => {
+                showAlert(`App "${name}" Published Successfully!`);
+                closeAdminDashboard();
+                document.getElementById('newAppName').value = '';
+                document.getElementById('newAppRating').value = '';
+                document.getElementById('newAppLogo').value = '';
+                document.getElementById('newAppLogoFile').value = '';
+                document.getElementById('newAppDownloadLink').value = '';
+                document.getElementById('newAppDesc').value = '';
+            }).catch((err) => {
+                showAlert('Error publishing app: ' + err.message);
             });
         }
 
@@ -689,35 +658,24 @@
                 return;
             }
 
-            let newPost = {
-                title: title,
-                image: image,
-                info: info
-            };
+            let newPost = { title, image, info };
 
-            // Optimistic Update
-            let tempId = 'yt_local_' + Date.now();
-            youtubePostsData.unshift({ id: tempId, ...newPost });
-            renderYouTubePosts();
-            showAlert('YouTube Post Published Successfully!');
-            closeAdminDashboard();
-
-            document.getElementById('ytPostTitle').value = '';
-            document.getElementById('ytPostImage').value = '';
-            document.getElementById('ytPostInfo').value = '';
-
-            // Background Firebase Push
-            push(ref(db, 'youtubePosts'), newPost).catch(() => {
-                showAlert('Cloud sync pending...');
+            push(ref(db, 'youtubePosts'), newPost).then(() => {
+                showAlert('YouTube Post Published Successfully!');
+                closeAdminDashboard();
+                document.getElementById('ytPostTitle').value = '';
+                document.getElementById('ytPostImage').value = '';
+                document.getElementById('ytPostInfo').value = '';
+            }).catch((err) => {
+                showAlert('Error publishing post: ' + err.message);
             });
         }
 
         window.deleteApp = function(id) {
             if (confirm('Are you sure you want to delete this app?')) {
-                appsData = appsData.filter(a => a.id !== id);
-                renderApps(appsData);
-                showAlert('App deleted');
-                remove(ref(db, 'apps/' + id));
+                remove(ref(db, 'apps/' + id)).then(() => {
+                    showAlert('App deleted');
+                });
             }
         }
 
@@ -727,10 +685,9 @@
                 return;
             }
             if (confirm('Are you sure you want to delete this YouTube post?')) {
-                youtubePostsData = youtubePostsData.filter(p => p.id !== id);
-                renderYouTubePosts();
-                showAlert('Post deleted');
-                remove(ref(db, 'youtubePosts/' + id));
+                remove(ref(db, 'youtubePosts/' + id)).then(() => {
+                    showAlert('Post deleted');
+                });
             }
         }
 
@@ -767,7 +724,7 @@
         window.filterCategory = (cat, btn) => {
             currentCategory = cat;
             document.querySelectorAll('.category-btn').forEach(b => {
-                const isLight = document.documentElement.classList.contains('light');
+                const isLight = siteSettings.theme === 'light';
                 b.className = `category-btn px-4 py-1.5 rounded-full text-xs font-medium ${isLight ? 'bg-white text-gray-600 border border-gray-200' : 'bg-[#1b1b22] text-gray-400 border border-gray-800'} hover:text-white shrink-0 transition-all`;
             });
             btn.className = "category-btn px-4 py-1.5 rounded-full text-xs font-medium bg-indigo-600 text-white shrink-0 transition-all shadow-sm shadow-indigo-600/30";
@@ -784,7 +741,7 @@
             }
 
             if (query.trim() !== '') {
-                filtered = filtered.filter(app => app.name.toLowerCase().includes(query) || app.desc.toLowerCase().includes(query));
+                filtered = filtered.filter(app => app.name.toLowerCase().includes(query) || (app.desc && app.desc.toLowerCase().includes(query)));
             }
 
             renderApps(filtered);
@@ -796,7 +753,7 @@
             document.getElementById('modalTitle').innerText = app.name;
             document.getElementById('modalCategory').innerText = `Category: ${app.category.toUpperCase()}`;
             document.getElementById('modalRating').innerText = app.rating;
-            document.getElementById('modalDesc').innerText = app.desc;
+            document.getElementById('modalDesc').innerText = app.desc || '';
             
             const modalIcon = document.getElementById('modalIcon');
             const modalImg = document.getElementById('modalImg');
