@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">Zero Xploid - App Store</title>
+    <title id="siteTitle">Sumon - App Store</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
@@ -373,7 +373,7 @@
             }
         ];
 
-        let siteSettings = { name: "Zero Xploid", count: "36 Apps", notice: "No new notifications", theme: "dark" };
+        let siteSettings = { name: "Sumon apps", count: "36 Apps", notice: "No new notifications", theme: "dark" };
         let appsData = [];
         let youtubePostsData = [];
 
@@ -425,7 +425,7 @@
             onValue(ref(db, 'settings'), (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    siteSettings.name = data.name || "Zero Xploid";
+                    siteSettings.name = data.name || "Sumon apps";
                     siteSettings.count = data.count || "36 Apps";
                     siteSettings.notice = data.notice || "No new notifications";
                 } else {
